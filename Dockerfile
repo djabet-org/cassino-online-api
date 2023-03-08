@@ -6,4 +6,4 @@ RUN mkdir /app
 ADD . /app
 WORKDIR /app
 RUN pip install -r requirements.txt
-# CMD ["python", "src/ws_blaze_crash.py"]
+CMD ["gunicorn", "-b", "0.0.0.0:8080", "--workers", "3", "app:app"]
