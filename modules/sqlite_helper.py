@@ -6,8 +6,8 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def fetch_all_crash_points():
     try:
-        # sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
-        sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='postgres', password='mysecretpassword')
+        sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
+        # sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='postgres', password='mysecretpassword')
         cursor = sqliteConnection.cursor()
         # print("Successfully Connected to SQLite")
         sqlite_select_query = """SELECT * from crash_points"""
