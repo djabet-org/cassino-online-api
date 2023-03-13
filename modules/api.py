@@ -17,16 +17,19 @@ def api():
 
 @app.route('/api/blaze/crash/probabilidades')
 def probabilidades():
-  max_velas = request.args.get("max_velas",default="1000")
-  velas = fetch_all_crash_points(max_velas)
-  app.logger.info("Quantidade de velas: ", len(max_velas))
+  # try:
+    max_velas = request.args.get("max_velas", default="1000")
+    app.logger.info(max_velas)
+    velas = fetch_all_crash_points()
 
-  result = calcular_probabilidades(velas)
-  qtd_velas = len(velas)
-  result["qtd_velas"] = qtd_velas
-  if qtd_velas > 1000:
-    deletar_velas_antigas(qtd_velas-1000)
-    
+    result = calcular_probabilidades(velas)
+    qtd_velas = len(velas)
+    result["qtd_velas"] = qtd_velas
+    if qtd_velas > 1000:
+      deletar_velas_antigas(str(qtd_velas-int(max_velas)))
 
-  # return in JSON format. (For API)
-  return jsonify(result)  
+    # return in JSON format. (For API)
+    return jsonify(result)
+  # except:
+  #   return jsonify("errorrrr")
+
