@@ -3,13 +3,11 @@ import os.path
 import psycopg2
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
-sqliteConnection = None
 
 def fetch_all_crash_points():
     try:
-        global sqliteConnection
-        sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
-        # sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='postgres', password='mysecretpassword')
+        # sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
+        sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='aluiz', password='')
         cursor = sqliteConnection.cursor()
         # print("Successfully Connected to SQLite")
         sqlite_select_query = """SELECT * from crash_points"""
@@ -26,12 +24,12 @@ def fetch_all_crash_points():
 
 def deletar_velas_antigas(qtd):
     try:
-        global sqliteConnection
-        sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
-        # sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='postgres', password='mysecretpassword')
+        # sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
+        sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='aluiz', password='')
         cursor = sqliteConnection.cursor()
         sqlite_select_query = "DELETE FROM crash_points WHERE id IN (SELECT id FROM crash_points ORDER BY created ASC LIMIT %s);"
-        cursor.execute(sqlite_select_query, (qtd, ))
+        cursor.execute(sqlite_select_query, (qtd,))
+        sqliteConnection.commit()
         cursor.close()
     except psycopg2.Error as error:
         print("Failed to delete crashes points", error)
