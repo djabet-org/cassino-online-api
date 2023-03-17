@@ -23,6 +23,7 @@ def probabilidades():
     velas = fetch_all_crash_points()
 
     result = calcular_probabilidades(velas)
+    app.logger.info("creu ", result)
     qtd_velas = len(velas)
     result["qtd_velas"] = qtd_velas
     if qtd_velas > 1000:
