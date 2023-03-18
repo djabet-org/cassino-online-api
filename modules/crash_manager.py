@@ -8,14 +8,8 @@ from __future__ import division
 def calcular_probabilidades(velas):
     
     return {
-        "Padrao (v,v,v,V): " : "%{0}".format(calculate_padrao1(velas)*100),
-        "Padrao (v,v,v,V) => G1: " : "%{0}".format(calculate_padrao1_g1(velas)*100),
         "Padrao (v,v,v,V) => G2: " : "%{0}".format(calculate_padrao1_g2(velas)*100),
-        "Padrao (v,v,V): " : "%{0}".format(calculate_padrao2(velas)*100),
-        "Padrao (v,v,V) => G1: " : "%{0}".format(calculate_padrao2_g1(velas)*100),
         "Padrao (v,v,V) => G2: " : "%{0}".format(calculate_padrao2_g2(velas)*100),
-        "Padrao (10v, V): " : "%{0}".format(calculate_padrao3(velas)*100),
-        "Padrao (10v, V) => G!: " : "%{0}".format(calculate_padrao3_g1(velas)*100),
         "Padrao (10v, V) => G2: " : "%{0}".format(calculate_padrao3_g2(velas)*100),
     }
 
