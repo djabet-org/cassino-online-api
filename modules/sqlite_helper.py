@@ -1,4 +1,5 @@
 from datetime import datetime
+import os
 import os.path
 import psycopg2
 
@@ -9,15 +10,17 @@ def fetch_all_crash_points():
     sqliteConnection = None
 
     try:
-        sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
-        # sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='aluiz', password='')
-        cursor = sqliteConnection.cursor()
-        # print("Successfully Connected to SQLite")
-        sqlite_select_query = """SELECT * from crash_points"""
-        cursor.execute(sqlite_select_query)
-        records = list(map(lambda row: row[0], cursor.fetchall()))
-        cursor.close()
-        return records
+       if os.getenv("FLY_APP_NAME") is None:
+            sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='aluiz', password='')
+       else:
+            sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
+        
+       cursor = sqliteConnection.cursor()
+       sqlite_select_query = """SELECT * from crash_points"""
+       cursor.execute(sqlite_select_query)
+       records = list(map(lambda row: row[0], cursor.fetchall()))
+       cursor.close()
+       return records
     except psycopg2.Error as error:
         print("Failed to fetch crashes", error)
     finally:
@@ -30,8 +33,11 @@ def deletar_velas_antigas(qtd):
     sqliteConnection = None
 
     try:
-        sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
-        # sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='aluiz', password='')
+        if os.getenv("FLY_APP_NAME") is None:
+            sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='aluiz', password='')
+        else:
+            sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')        # sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='aluiz', password='')
+        
         cursor = sqliteConnection.cursor()
         sqlite_select_query = "DELETE FROM crash_points WHERE id IN (SELECT id FROM crash_points ORDER BY created ASC LIMIT %s);"
         cursor.execute(sqlite_select_query, (qtd,))
