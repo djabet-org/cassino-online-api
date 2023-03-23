@@ -35,10 +35,6 @@ class TestBlazeCrash(unittest.TestCase):
         velas = [1.25, 1.24, 4, 5, 6, 7, 8, 1.25, 1.24, 1.40, 1.40, 1.40]
 
         self.assertEqual(calculate_padrao_2p_13x_g2(velas), 0.5)        
-    # def test_padrao4_3(self):
-    #     velas = [3,3,3,3,3,3,3,1,1,1.7,1.7,2]
-
-    #     self.assertEqual(calculate_padrao_2p_13x_g2(velas), 1)           
 
 if __name__ == '__main__':
     unittest.main()
