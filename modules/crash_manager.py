@@ -4,6 +4,8 @@ from __future__ import division
 # 1. 3 velas verdes, proxima 2x?
 # 2. 2 velas verdes, proxima 2x?
 # 3. 1 velas verde >= 10, proxima 2x?
+# 4. 2 velas pretas < 1.5, proxima 2x?
+# 5. 1 vela preta < 1.5, 2 velas verdes, 1 vela preta < 1.5, proxima 2x?
 
 def calcular_probabilidades(velas):
     
@@ -138,3 +140,33 @@ def calculate_padrao4_g2(velas = []):
                 qtdSucesso += 1
 
     return float(qtdSucesso/qtdPadraoEncontrado) if qtdPadraoEncontrado > 0 else 0
+
+ # Padrao (1.5p, 1.5p)
+def calculate_padrao5_g2(velas = []):
+    qtdSucesso = 0
+    qtdPadraoEncontrado = 0
+    for i in range(len(velas)-4):
+        if velas[i] < 1.5 and velas[i+1] >= 2 and velas[i+2] >= 2 and velas[i+3] < 1.5:
+            # print(velas[i:i+2])
+            qtdPadraoEncontrado += 1
+            if any( vela >= 2 for vela in velas[i+4:i+7]):
+                qtdSucesso += 1
+
+    return float(qtdSucesso/qtdPadraoEncontrado) if qtdPadraoEncontrado > 0 else 0 
+
+# Padrao (1.3p, 1.3p)
+def calculate_padrao_2p_13x_g2(velas = []):
+    return _calculate_padrao_2p_g2(velas, 1.3) 
+
+def _calculate_padrao_2p_g2(velas = [], vela = 1.99):
+    qtdSucesso = 0
+    qtdPadraoEncontrado = 0
+    for i in range(len(velas)-2):
+        # print(velas[i:i+2])
+        if all( v < vela for v in velas[i:i+2]):
+            print(velas[i:i+2])
+            qtdPadraoEncontrado += 1
+            if any( v >= 2 for v in velas[i+2:i+5]):
+                qtdSucesso += 1
+
+    return float(qtdSucesso/qtdPadraoEncontrado) if qtdPadraoEncontrado > 0 else 0 
