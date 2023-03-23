@@ -156,7 +156,11 @@ def calculate_padrao5_g2(velas = []):
 
 # Padrao (1.3p, 1.3p)
 def calculate_padrao_2p_13x_g2(velas = []):
-    return _calculate_padrao_2p_g2(velas, 1.3) 
+    return _calculate_padrao_2p_g2(velas, 1.3)
+
+# Padrao (1.2p, 1.2p)
+def calculate_padrao_2p_12x_g2(velas = []):
+    return _calculate_padrao_2p_g2(velas, 1.2)     
 
 def _calculate_padrao_2p_g2(velas = [], vela = 1.99):
     qtdSucesso = 0
