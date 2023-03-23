@@ -99,39 +99,19 @@ def calculate_padrao2_g2(velas = []):
         
     return float(qtdSucesso/qtdPadraoEncontrado)        
 
-def calculate_padrao3(velas = []):
+def calculate_padrao_1v10x_g2(velas = []):
+    return _calculate_padrao_1vXx_g2(velas, 10)
+
+def _calculate_padrao_1vXx_g2(velas = [], vela = 10):
     qtdSucesso = 0
     qtdPadraoEncontrado = 0
 
     for i in range(len(velas)-1):
-        if velas[i] >= 10:
+        if velas[i] >= vela:
             qtdPadraoEncontrado += 1
-            if velas[i+1] >= 2:
+            if any(v >= 2 for v in velas[i+1:i+4]):
                 qtdSucesso += 1
-    return float(qtdSucesso/qtdPadraoEncontrado)
-            
-
-def calculate_padrao3_g1(velas = []):
-    qtdSucesso = 0
-    qtdPadraoEncontrado = 0
-
-    for i in range(len(velas)-2):
-        if velas[i] >= 10:
-            qtdPadraoEncontrado += 1
-            if velas[i+1] >= 2 or velas[i+2] >= 2:
-                qtdSucesso += 1                
-    return float(qtdSucesso/qtdPadraoEncontrado)
-
-def calculate_padrao3_g2(velas = []):
-    qtdSucesso = 0
-    qtdPadraoEncontrado = 0
-
-    for i in range(len(velas)-3):
-        if velas[i] >= 10:
-            qtdPadraoEncontrado += 1
-            if velas[i+1] >= 2 or velas[i+2] >= 2 or velas[i+3] >= 2:
-                qtdSucesso += 1                   
-    return float(qtdSucesso/qtdPadraoEncontrado)
+    return float(qtdSucesso/qtdPadraoEncontrado) if qtdPadraoEncontrado > 0 else 0             
 
 # Padrao (1.1p, 1.1p)
 def calculate_padrao_2p_11x_g2(velas = []):
