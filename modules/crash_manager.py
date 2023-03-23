@@ -13,7 +13,11 @@ def calcular_probabilidades(velas):
         "Padrao (v,v,v) => G2: " : "%{0}".format(calculate_padrao1_g2(velas)*100),
         "Padrao (v,v) => G2: " : "%{0}".format(calculate_padrao2_g2(velas)*100),
         "Padrao (10v) => G2: " : "%{0}".format(calculate_padrao3_g2(velas)*100),
-        "Padrao (1.5p, 1.5p) => G2: " : "%{0}".format(calculate_padrao4_g2(velas)*100),
+        "Padrao (1.5p, 1.5p) => G2: " : "%{0}".format(calculate_padrao_2p_15x_g2(velas)*100),
+        "Padrao (1.4p, 1.4p) => G2: " : "%{0}".format(calculate_padrao_2p_14x_g2(velas)*100),
+        "Padrao (1.3p, 1.3p) => G2: " : "%{0}".format(calculate_padrao_2p_13x_g2(velas)*100),
+        "Padrao (1.2p, 1.2p) => G2: " : "%{0}".format(calculate_padrao_2p_12x_g2(velas)*100),
+        "Padrao (1.1p, 1.1p) => G2: " : "%{0}".format(calculate_padrao_2p_11x_g2(velas)*100),
     }
 
 def calculate_padrao1(velas = []):
@@ -42,6 +46,7 @@ def calculate_padrao1_g1(velas = []):
         
     return float(qtdSucesso/qtdPadraoEncontrado)
 
+#Padrao (v,v,v)"
 def calculate_padrao1_g2(velas = []):
     qtdSucesso = 0
     qtdPadraoEncontrado = 0
@@ -128,13 +133,17 @@ def calculate_padrao3_g2(velas = []):
                 qtdSucesso += 1                   
     return float(qtdSucesso/qtdPadraoEncontrado)
 
-# Padrao (1.3p, 1.3p)
-def calculate_padrao_2p_13x_g2(velas = []):
-    return _calculate_padrao_2p_g2(velas, 1.3)
+# Padrao (1.1p, 1.1p)
+def calculate_padrao_2p_11x_g2(velas = []):
+    return _calculate_padrao_2p_g2(velas, 1.1)
 
 # Padrao (1.2p, 1.2p)
 def calculate_padrao_2p_12x_g2(velas = []):
     return _calculate_padrao_2p_g2(velas, 1.2)     
+
+# Padrao (1.3p, 1.3p)
+def calculate_padrao_2p_13x_g2(velas = []):
+    return _calculate_padrao_2p_g2(velas, 1.3)
 
 # Padrao (1.4p, 1.4p)
 def calculate_padrao_2p_14x_g2(velas = []):
