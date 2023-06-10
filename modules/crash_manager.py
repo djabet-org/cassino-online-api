@@ -31,16 +31,27 @@ def calcular_probabilidades(velas):
         "Padrao (1.1p, 1.1p) => G2: " : "%{0}".format(calculate_padrao_2p_11x_g2(velas)*100),
     }
 
-def media_velas(velas):
-    velas3x = fetch_all_crash_points(200, 3)
-    velas5x = fetch_all_crash_points(200, 5)
-    velas10x = fetch_all_crash_points(200, 10)
+def media_intervalo_tempo(velas = []):
+    print(velas)
+    qtd_intervals = 0
+    seconds_total = 0
+    for i in range(len(velas)-1):
+        seconds_diff = (velas[i][1] - velas[i+1][1]).total_seconds()
+        seconds_total += seconds_diff
+        qtd_intervals += 1
+    return (seconds_total/qtd_intervals) / 60
 
-    return {
-        "3x" : calculate_media(velas3x, 3),
-        "5x" : calculate_media(velas5x, 5),
-        "10x" : calculate_media(velas10x, 10),
-    }    
+def media_velas(qtd_velas):
+    intervalos = dict()
+    velas3x = fetch_all_crash_points(qtd_velas, 3)
+    velas5x = fetch_all_crash_points(qtd_velas, 5)
+    velas10x = fetch_all_crash_points(qtd_velas, 10)
+
+    intervalos['3x'] = media_intervalo_tempo(velas3x)
+    intervalos['5x'] = media_intervalo_tempo(velas5x)
+    intervalos['10x'] = media_intervalo_tempo(velas10x)
+
+    return intervalos 
 
 # def calculate_media(velas = [], forVela):
 #     for i in range(len(velas)):

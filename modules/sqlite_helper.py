@@ -32,30 +32,30 @@ def fetch_all_crash_points( howMany):
 
 
 
-# def fetch_all_crash_points( howMany, atLeast):
+def fetch_all_crash_points( howMany, atLeast):
 
-#     sqliteConnection = None
+    sqliteConnection = None
 
-#     try:
-#        if os.getenv("FLY_APP_NAME") is None:
-#             # sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='aluiz', password='')
-#             sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
+    try:
+       if os.getenv("FLY_APP_NAME") is None:
+            # sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='aluiz', password='')
+            sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
 
-#        else:
-#             sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
+       else:
+            sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
         
-#        cursor = sqliteConnection.cursor()
-#        sqlite_select_query = "SELECT * FROM crash_points WHERE crash_point >= %s ORDER BY created DESC LIMIT %s);"
-#        cursor.execute(sqlite_select_query, (atLeast, howMany,))
-#        records = list(map(lambda row: row[0], cursor.fetchall()))
-#        cursor.close()
-#        return records
-#     except psycopg2.Error as error:
-#         print("Failed to fetch crashes", error)
-#     finally:
-#         if sqliteConnection:
-#             sqliteConnection.close()
-#             # print("The SQLite connection is closed")  
+       cursor = sqliteConnection.cursor()
+       sqlite_select_query = "SELECT * FROM crash_points WHERE crash_point >= %s ORDER BY created DESC LIMIT %s;"
+       cursor.execute(sqlite_select_query, (atLeast, howMany,))
+       records = list(map(lambda row: row, cursor.fetchall()))
+       cursor.close()
+       return records
+    except psycopg2.Error as error:
+        print("Failed to fetch crashes", error)
+    finally:
+        if sqliteConnection:
+            sqliteConnection.close()
+            # print("The SQLite connection is closed")  
 
 # def fetch_crash_points( at_least, startTime, endTime):
 

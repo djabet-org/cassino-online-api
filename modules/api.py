@@ -14,6 +14,17 @@ def api():
   # return in JSON format. (For API)
   return jsonify({"message":"Hello from Flask!"})
 
+@app.route('/api/blaze/crash/media/velas')
+def media_intervalos():
+    max_velas = request.args.get("max_velas", default="200")
+    app.logger.info(max_velas)
+    media = media_velas(max_velas)
+
+    app.logger.info("creu ", media)
+
+    # return in JSON format. (For API)
+    return jsonify(media)
+
 
 @app.route('/api/blaze/crash/probabilidades')
 def probabilidades():
