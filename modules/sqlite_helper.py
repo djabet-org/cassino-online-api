@@ -5,7 +5,7 @@ import psycopg2
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-def fetch_all_crash_points( howMany):
+def fetch_crash_points( howMany):
 
     sqliteConnection = None
 
@@ -32,7 +32,7 @@ def fetch_all_crash_points( howMany):
 
 
 
-def fetch_all_crash_points( howMany, atLeast):
+def fetch_crash_points_at_least( howMany, atLeast):
 
     sqliteConnection = None
 

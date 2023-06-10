@@ -2,7 +2,7 @@
 # Usage covered in <IDC lICENSE>
 # Jainam Oswal. <jainam.me> 
 from .crash_manager import calcular_probabilidades, media_velas, fetch_contagem_cores
-from .sqlite_helper import fetch_all_crash_points, deletar_velas_antigas
+from .sqlite_helper import fetch_crash_points, deletar_velas_antigas
 
 # Import Libraries 
 from app import app
@@ -29,9 +29,9 @@ def media_intervalos():
 @app.route('/api/blaze/crash/probabilidades')
 def probabilidades():
   # try:
-    max_velas = request.args.get("max_velas", default="1000")
+    max_velas = request.args.get("max_velas", default="200")
     app.logger.info(max_velas)
-    velas = fetch_all_crash_points()
+    velas = fetch_crash_points(max_velas)
 
     result = calcular_probabilidades(velas)
     app.logger.info("creu ", result)
