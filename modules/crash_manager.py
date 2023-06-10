@@ -1,4 +1,6 @@
 from __future__ import division
+from .sqlite_helper import fetch_all_crash_points, deletar_velas_antigas
+
 
 # Padroes:
 # 1. 3 velas verdes, proxima 2x?
@@ -28,6 +30,43 @@ def calcular_probabilidades(velas):
         "Padrao (1.2p, 1.2p) => G2: " : "%{0}".format(calculate_padrao_2p_12x_g2(velas)*100),
         "Padrao (1.1p, 1.1p) => G2: " : "%{0}".format(calculate_padrao_2p_11x_g2(velas)*100),
     }
+
+def media_velas(velas):
+    velas3x = fetch_all_crash_points(200, 3)
+    velas5x = fetch_all_crash_points(200, 5)
+    velas10x = fetch_all_crash_points(200, 10)
+
+    return {
+        "3x" : calculate_media(velas3x, 3),
+        "5x" : calculate_media(velas5x, 5),
+        "10x" : calculate_media(velas10x, 10),
+    }    
+
+# def calculate_media(velas = [], forVela):
+#     for i in range(len(velas)):
+
+
+
+
+def fetch_contagem_cores(qtd_velas):
+    velas = fetch_all_crash_points(qtd_velas)
+    print(qtd_velas)
+    print(velas)
+    contagem = dict()
+    qtdPreta = qtdVerde = 0
+
+    for vela in velas:
+        if vela >= 2:
+            qtdVerde += 1
+        else:
+            qtdPreta += 1
+
+    contagem['qtdPreta'] = qtdPreta
+    contagem['qtdVerde'] = qtdVerde
+    contagem['percentagePreta'] = "{:.0%}".format(qtdPreta/int(qtd_velas))
+    contagem['percentageVerde'] = "{:.0%}".format(qtdVerde/int(qtd_velas))
+
+    return contagem
 
 def calculate_padrao1(velas = []):
     qtdSucesso = 0
