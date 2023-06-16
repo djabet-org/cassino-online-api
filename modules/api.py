@@ -25,6 +25,13 @@ def media_intervalos():
     # return in JSON format. (For API)
     return jsonify(media)
 
+@app.route('/api/blaze/crash/velas/<qtd>', methods = ['DELETE'])
+def delete(qtd):
+    deletar_velas_antigas(qtd)
+
+    app.logger.info("deleted!")
+
+    return "deleted!", 204
 
 @app.route('/api/blaze/crash/probabilidades')
 def probabilidades():
