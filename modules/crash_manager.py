@@ -46,10 +46,12 @@ def media_velas(qtd_velas):
     velas3x = fetch_crash_points_at_least(qtd_velas, 3)
     velas5x = fetch_crash_points_at_least(qtd_velas, 5)
     velas10x = fetch_crash_points_at_least(qtd_velas, 10)
+    velas100x = fetch_crash_points_at_least(qtd_velas, 100)
 
     intervalos['3x'] = media_intervalo_tempo(velas3x)
     intervalos['5x'] = media_intervalo_tempo(velas5x)
     intervalos['10x'] = media_intervalo_tempo(velas10x)
+    intervalos['100x'] = media_intervalo_tempo(velas100x)
 
     return intervalos 
 
