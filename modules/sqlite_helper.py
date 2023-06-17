@@ -32,7 +32,7 @@ def fetch_crash_points( howMany):
 
 
 
-def fetch_crash_points_at_least( howMany, atLeast):
+def fetch_crash_points_at_least( howMany, atLeast, atMost):
 
     sqliteConnection = None
 
@@ -45,8 +45,8 @@ def fetch_crash_points_at_least( howMany, atLeast):
             sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
         
        cursor = sqliteConnection.cursor()
-       sqlite_select_query = "SELECT * FROM crash_points WHERE crash_point >= %s ORDER BY created DESC LIMIT %s;"
-       cursor.execute(sqlite_select_query, (atLeast, howMany,))
+       sqlite_select_query = "SELECT * FROM crash_points WHERE crash_point >= %s and crash_point < %s ORDER BY created DESC LIMIT %s;"
+       cursor.execute(sqlite_select_query, (atLeast, atMost, howMany,))
        records = list(map(lambda row: row, cursor.fetchall()))
        cursor.close()
        return records
