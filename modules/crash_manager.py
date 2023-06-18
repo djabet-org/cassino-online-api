@@ -1,5 +1,5 @@
 from __future__ import division
-from .sqlite_helper import fetch_crash_points, fetch_crash_points_at_least, deletar_velas_antigas
+from .sqlite_helper import fetch_crash_points, fetch_crash_points_at_least, fetch_crash_object
 
 
 # Padroes:
@@ -31,6 +31,12 @@ def calcular_probabilidades(velas):
         "Padrao (1.1p, 1.1p) => G2: " : "%{0}".format(calculate_padrao_2p_11x_g2(velas)*100),
     }
 
+def get_estrategias(qtd_velas):
+    return {
+        "5x5min": probabilidade_padrao_X5min(qtd_velas, 5, 10),
+        "10x5min": probabilidade_padrao_X5min(qtd_velas, 10, 50)
+    }
+
 def media_intervalo_tempo(velas = []):
     print(velas)
     qtd_intervals = 0
@@ -55,16 +61,34 @@ def media_velas(qtd_velas):
 
     return intervalos 
 
-# def calculate_media(velas = [], forVela):
-#     for i in range(len(velas)):
+def probabilidade_padrao_X5min(qtd_velas, minVela, maxVela):
+    velas = list(reversed(fetch_crash_object(qtd_velas)))
+    found_vela = None
+    tries = 0
+    hit = 0
+    galhos = []
+    for vela in velas:
+        if not found_vela and vela[0] >= minVela and vela[0] < maxVela:
+            found_vela = vela
+            continue
+        
+        if found_vela:
+            minutes_diff = (vela[1] - found_vela[1]).total_seconds() / 60
+            if minutes_diff >= 5:
+                if len(galhos) < 2:
+                    galhos.append(vela[0])
+                    continue
 
-
-
+                tries += 1
+                if (any( v >= 2 for v in galhos)):                
+                    hit += 1
+                found_vela = None
+                galhos = []
+   
+    return "0%" if hit == tries == 0 else "{:.0%}".format(hit/tries)
 
 def fetch_contagem_cores(qtd_velas):
     velas = fetch_crash_points(qtd_velas)
-    print(qtd_velas)
-    print(velas)
     contagem = dict()
     qtdPreta = qtdVerde = 0
 

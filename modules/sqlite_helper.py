@@ -5,7 +5,7 @@ import psycopg2
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-def fetch_crash_points( howMany):
+def fetch_crash_object( howMany):
 
     sqliteConnection = None
 
@@ -19,8 +19,8 @@ def fetch_crash_points( howMany):
         
        cursor = sqliteConnection.cursor()
        sqlite_select_query = "SELECT * FROM crash_points ORDER BY created DESC LIMIT %s;"
-       cursor.execute(sqlite_select_query, (howMany,))
-       records = list(map(lambda row: row[0], cursor.fetchall()))
+       cursor.execute(sqlite_select_query, (howMany, ))
+       records = list(map(lambda row: row, cursor.fetchall()))
        cursor.close()
        return records
     except psycopg2.Error as error:
@@ -30,7 +30,8 @@ def fetch_crash_points( howMany):
             sqliteConnection.close()
             # print("The SQLite connection is closed")  
 
-
+def fetch_crash_points( howMany):
+    return map( lambda vela: vela[0], fetch_crash_object(howMany))
 
 def fetch_crash_points_at_least( howMany, atLeast, atMost):
 
