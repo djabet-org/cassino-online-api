@@ -1,7 +1,7 @@
 # This file is part of https://github.com/jainamoswal/Flask-Example.
 # Usage covered in <IDC lICENSE>
 # Jainam Oswal. <jainam.me> 
-from .crash_manager import calcular_probabilidades, media_velas, fetch_contagem_cores, probabilidade_padrao_X5min, get_estrategias
+from .crash_manager import calcular_probabilidades, media_velas, fetch_contagem_cores, get_estrategias
 
 from .sqlite_helper import fetch_crash_points, deletar_velas_antigas
 
@@ -15,7 +15,7 @@ def api():
   # return in JSON format. (For API)
   return jsonify({"message":"Hello from Flask!"})
 
-@app.route('/api/blaze/dashboard/<qtd_velas>')
+@app.route('/api/blaze/crash/dashboard/<qtd_velas>')
 def dashboard(qtd_velas):
   # return in JSON format. (For API)
   result = dict()
@@ -42,13 +42,6 @@ def delete(qtd):
     app.logger.info("deleted!")
 
     return "deleted!", 204
-
-@app.route('/api/blaze/crash/velas/<qtd_velas>/estrategias')
-def estrategias(qtd_velas):
-    return jsonify({
-        "5x5min": probabilidade_padrao_X5min(qtd_velas, 5, 10),
-        "10x5min": probabilidade_padrao_X5min(qtd_velas, 10, 50)
-    })
 
 @app.route('/api/blaze/crash/probabilidades')
 def probabilidades():

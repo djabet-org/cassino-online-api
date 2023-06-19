@@ -33,8 +33,10 @@ def calcular_probabilidades(velas):
 
 def get_estrategias(qtd_velas):
     return {
-        "5x5min": probabilidade_padrao_X5min(qtd_velas, 5, 10),
-        "10x5min": probabilidade_padrao_X5min(qtd_velas, 10, 50)
+        "5x3min": probabilidade_padrao_minutagem(qtd_velas, 5, 10, 3),
+        "10x3min": probabilidade_padrao_minutagem(qtd_velas, 10, 50, 3),
+        "5x5min": probabilidade_padrao_minutagem(qtd_velas, 5, 10, 5),
+        "10x5min": probabilidade_padrao_minutagem(qtd_velas, 10, 50, 5)
     }
 
 def media_intervalo_tempo(velas = []):
@@ -61,7 +63,7 @@ def media_velas(qtd_velas):
 
     return intervalos 
 
-def probabilidade_padrao_X5min(qtd_velas, minVela, maxVela):
+def probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
     velas = list(reversed(fetch_crash_object(qtd_velas)))
     found_vela = None
     tries = 0
@@ -74,7 +76,7 @@ def probabilidade_padrao_X5min(qtd_velas, minVela, maxVela):
         
         if found_vela:
             minutes_diff = (vela[1] - found_vela[1]).total_seconds() / 60
-            if minutes_diff >= 5:
+            if minutes_diff >= minutos:
                 if len(galhos) < 2:
                     galhos.append(vela[0])
                     continue
