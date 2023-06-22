@@ -1,5 +1,6 @@
 from __future__ import division
 from .sqlite_helper import fetch_crash_points, fetch_crash_points_at_least, fetch_crash_object
+from datetime import timedelta
 
 
 # Padroes:
@@ -32,11 +33,16 @@ def calcular_probabilidades(velas):
     }
 
 def get_estrategias(qtd_velas):
+    # Padrao a => 5x3min
+    # Padrao b => 10x3min
+    # Padrao c => 5x5min
+    # Padrao d => 10x5min
+
     return {
-        "5x3min": probabilidade_padrao_minutagem(qtd_velas, 5, 10, 3),
-        "10x3min": probabilidade_padrao_minutagem(qtd_velas, 10, 50, 3),
-        "5x5min": probabilidade_padrao_minutagem(qtd_velas, 5, 10, 5),
-        "10x5min": probabilidade_padrao_minutagem(qtd_velas, 10, 50, 5)
+        "a": probabilidade_padrao_minutagem(qtd_velas, 5, 10, 3),
+        "b": probabilidade_padrao_minutagem(qtd_velas, 10, 50, 3),
+        "c": probabilidade_padrao_minutagem(qtd_velas, 5, 10, 5),
+        "d": probabilidade_padrao_minutagem(qtd_velas, 10, 50, 5)
     }
 
 def media_intervalo_tempo(velas = []):
@@ -69,12 +75,15 @@ def probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
     tries = 0
     hit = 0
     galhos = []
+    hora_entrada = None
+
     for vela in velas:
         if not found_vela and vela[0] >= minVela and vela[0] < maxVela:
             found_vela = vela
             continue
         
         if found_vela:
+            vela_entrada = found_vela 
             minutes_diff = (vela[1] - found_vela[1]).total_seconds() / 60
             if minutes_diff >= minutos:
                 if len(galhos) < 2:
@@ -87,7 +96,10 @@ def probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
                 found_vela = None
                 galhos = []
    
-    return "0%" if hit == tries == 0 else "{:.0%}".format(hit/tries)
+    return {
+        "assertividade": "0%" if hit == tries == 0 else "{:.0%}".format(hit/tries),
+        "vela_selecionada": vela_entrada[0]
+    }
 
 def fetch_contagem_cores(qtd_velas):
     velas = fetch_crash_points(qtd_velas)
