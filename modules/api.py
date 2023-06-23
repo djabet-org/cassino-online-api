@@ -1,9 +1,8 @@
 # This file is part of https://github.com/jainamoswal/Flask-Example.
 # Usage covered in <IDC lICENSE>
 # Jainam Oswal. <jainam.me> 
-from .crash_manager import calcular_probabilidades, media_velas, fetch_contagem_cores, get_estrategias
-
-from .sqlite_helper import fetch_crash_points, deletar_velas_antigas
+from .crash_manager import calcular_probabilidades, media_velas, fetch_contagem_cores, get_estrategias, fetch_velas
+from .sqlite_helper import deletar_velas_antigas
 
 # Import Libraries 
 from app import app
@@ -15,6 +14,12 @@ def api():
   # return in JSON format. (For API)
   return jsonify({"message":"Hello from Flask!"})
 
+@app.route('/api/blaze/crash/velas/<qtd_velas>')
+def velas(qtd_velas):
+  velas = fetch_velas(qtd_velas)
+  # return in JSON format. (For API)
+  return jsonify(velas)
+
 @app.route('/api/blaze/crash/dashboard/<qtd_velas>')
 def dashboard(qtd_velas):
   # return in JSON format. (For API)
@@ -22,6 +27,7 @@ def dashboard(qtd_velas):
   result['media_intervalos'] = media_velas(qtd_velas)
   result['estrategias'] = get_estrategias(qtd_velas)
   result['contagem_cores'] = fetch_contagem_cores(qtd_velas)
+  result['velas'] = fetch_velas(qtd_velas)
   return jsonify(result)
 
 @app.route('/api/blaze/crash/media/velas')
@@ -48,7 +54,7 @@ def probabilidades():
   # try:
     max_velas = request.args.get("max_velas", default="200")
     app.logger.info(max_velas)
-    velas = fetch_crash_points(max_velas)
+    velas = fetch_velas(max_velas)
 
     result = calcular_probabilidades(velas)
     app.logger.info("creu ", result)

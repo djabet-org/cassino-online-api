@@ -39,10 +39,10 @@ def get_estrategias(qtd_velas):
     # Padrao d => 10x5min
 
     return {
-        "a": probabilidade_padrao_minutagem(qtd_velas, 5, 10, 3),
-        "b": probabilidade_padrao_minutagem(qtd_velas, 10, 50, 3),
-        "c": probabilidade_padrao_minutagem(qtd_velas, 5, 10, 5),
-        "d": probabilidade_padrao_minutagem(qtd_velas, 10, 50, 5)
+        "a": _probabilidade_padrao_minutagem(qtd_velas, 5, 10, 3),
+        "b": _probabilidade_padrao_minutagem(qtd_velas, 10, 50, 3),
+        "c": _probabilidade_padrao_minutagem(qtd_velas, 5, 10, 5),
+        "d": _probabilidade_padrao_minutagem(qtd_velas, 10, 50, 5)
     }
 
 def media_intervalo_tempo(velas = []):
@@ -69,7 +69,7 @@ def media_velas(qtd_velas):
 
     return intervalos 
 
-def probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
+def _probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
     velas = list(reversed(fetch_crash_object(qtd_velas)))
     found_vela = None
     tries = 0
@@ -91,7 +91,7 @@ def probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
                     continue
 
                 tries += 1
-                if (any( v >= 2 for v in galhos)):                
+                if (any( v > 2 for v in galhos)):                
                     hit += 1
                 found_vela = None
                 galhos = []
@@ -119,128 +119,5 @@ def fetch_contagem_cores(qtd_velas):
 
     return contagem
 
-def calculate_padrao1(velas = []):
-    qtdSucesso = 0
-    qtdPadraoEncontrado = 0
-
-    for i in range(len(velas)-3):
-        if all(x >= 2 for x in velas[i:i+3]):
-            qtdPadraoEncontrado += 1
-            if velas[i+3] >= 2:
-                qtdSucesso += 1
-        
-        
-    return float(qtdSucesso/qtdPadraoEncontrado)
-
-def calculate_padrao1_g1(velas = []):
-    qtdSucesso = 0
-    qtdPadraoEncontrado = 0
-
-    for i in range(len(velas)-4):
-        if all(x >= 2 for x in velas[i:i+3]):
-            qtdPadraoEncontrado += 1
-            if velas[i+3] >= 2:
-                qtdSucesso += 1
-        
-        
-    return float(qtdSucesso/qtdPadraoEncontrado)
-
-#Padrao (v,v,v)"
-def calculate_padrao1_g2(velas = []):
-    qtdSucesso = 0
-    qtdPadraoEncontrado = 0
-
-    for i in range(len(velas)-5):
-        if all(x >= 2 for x in velas[i:i+3]):
-            qtdPadraoEncontrado += 1
-            if velas[i+3] >= 2 or velas[i+4] >= 2 or velas[i+5] >= 2:
-                qtdSucesso += 1
-        
-        
-    return float(qtdSucesso/qtdPadraoEncontrado)    
-
-def calculate_padrao2(velas = []):
-    qtdSucesso = 0
-    qtdPadraoEncontrado = 0
-
-    for i in range(len(velas)-2):
-        if velas[i] >= 2 and velas[i+1] >= 2:
-            qtdPadraoEncontrado += 1
-            if velas[i+2] >= 2:
-                qtdSucesso += 1
-        
-        
-    return float(qtdSucesso/qtdPadraoEncontrado)
-
-def calculate_padrao2_g1(velas = []):
-    qtdSucesso = 0
-    qtdPadraoEncontrado = 0
-
-    for i in range(len(velas)-3):
-        if velas[i] >= 2 and velas[i+1] >= 2:
-            qtdPadraoEncontrado += 1
-            if velas[i+2] >= 2 or velas[i+3] >= 2:
-                qtdSucesso += 1
-        
-        
-    return float(qtdSucesso/qtdPadraoEncontrado) 
-
-def calculate_padrao2_g2(velas = []):
-    qtdSucesso = 0
-    qtdPadraoEncontrado = 0
-
-    for i in range(len(velas)-4):
-        if velas[i] >= 2 and velas[i+1] >= 2:
-            qtdPadraoEncontrado += 1
-            if velas[i+2] >= 2 or velas[i+3] >= 2 or velas[i+4] >= 2:
-                qtdSucesso += 1
-        
-        
-    return float(qtdSucesso/qtdPadraoEncontrado)        
-
-def calculate_padrao_1v10x_g2(velas = []):
-    return _calculate_padrao_1vXx_g2(velas, 10)
-
-def _calculate_padrao_1vXx_g2(velas = [], vela = 10):
-    qtdSucesso = 0
-    qtdPadraoEncontrado = 0
-
-    for i in range(len(velas)-1):
-        if velas[i] >= vela:
-            qtdPadraoEncontrado += 1
-            if any(v >= 2 for v in velas[i+1:i+4]):
-                qtdSucesso += 1
-    return float(qtdSucesso/qtdPadraoEncontrado) if qtdPadraoEncontrado > 0 else 0             
-
-# Padrao (1.1p, 1.1p)
-def calculate_padrao_2p_11x_g2(velas = []):
-    return _calculate_padrao_2p_g2(velas, 1.1)
-
-# Padrao (1.2p, 1.2p)
-def calculate_padrao_2p_12x_g2(velas = []):
-    return _calculate_padrao_2p_g2(velas, 1.2)     
-
-# Padrao (1.3p, 1.3p)
-def calculate_padrao_2p_13x_g2(velas = []):
-    return _calculate_padrao_2p_g2(velas, 1.3)
-
-# Padrao (1.4p, 1.4p)
-def calculate_padrao_2p_14x_g2(velas = []):
-    return _calculate_padrao_2p_g2(velas, 1.4)
-
-# Padrao (1.5p, 1.5p)
-def calculate_padrao_2p_15x_g2(velas = []):
-    return _calculate_padrao_2p_g2(velas, 1.5)     
-
-def _calculate_padrao_2p_g2(velas = [], vela = 1.99):
-    qtdSucesso = 0
-    qtdPadraoEncontrado = 0
-    for i in range(len(velas)-2):
-        # print(velas[i:i+2])
-        if all( v < vela for v in velas[i:i+2]):
-            print(velas[i:i+2])
-            qtdPadraoEncontrado += 1
-            if any( v >= 2 for v in velas[i+2:i+5]):
-                qtdSucesso += 1
-
-    return float(qtdSucesso/qtdPadraoEncontrado) if qtdPadraoEncontrado > 0 else 0 
+def fetch_velas(qtd_velas):
+    return list(map( lambda velaObg: { "vela": velaObg[0], "created": velaObg[1]}, fetch_crash_object(qtd_velas)))
