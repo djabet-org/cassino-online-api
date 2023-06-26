@@ -6,6 +6,10 @@
 # Import Libraries 
 from app import app
 import os
+from flask_socketio import SocketIO
+
+# socketio = SocketIO(app)
+
 
 # If file is called directly called, then run the app on the PORT provided defined in ENV or use '6969'.
 if __name__ == "__main__":

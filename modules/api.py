@@ -7,6 +7,11 @@ from .cassino_database_manager import deletar_velas_antigas
 # Import Libraries 
 from app import app
 from flask import jsonify, request
+# from flask_socketio import send, emit
+
+# @socketio.on('opa')
+# def handle_json(msg):
+#     print('msg: ' + str(msg))
 
 # Define route "/api".
 @app.route('/api')
@@ -17,6 +22,7 @@ def api():
 @app.route('/api/blaze/crash/velas/<qtd_velas>')
 def velas(qtd_velas):
   velas = fetch_velas(qtd_velas)
+  # send('hey')
   # return in JSON format. (For API)
   return jsonify(velas)
 
