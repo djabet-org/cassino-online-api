@@ -1,6 +1,6 @@
 from __future__ import division
-from .sqlite_helper import fetch_crash_points, fetch_crash_points_at_least, fetch_crash_object
-from datetime import timedelta
+import datetime
+from .cassino_database_manager import fetch_crash_points
 
 
 # Padroes:
@@ -9,28 +9,6 @@ from datetime import timedelta
 # 3. 1 velas verde >= 10, proxima 2x?
 # 4. 2 velas pretas < 1.5, proxima 2x?
 # 5. 1 vela preta < 1.5, 2 velas verdes, 1 vela preta < 1.5, proxima 2x?
-
-def calcular_probabilidades(velas):
-    
-    return {
-        "Padrao (v,v,v) => G2: " : "%{0}".format(calculate_padrao1_g2(velas)*100),
-        "Padrao (v,v) => G2: " : "%{0}".format(calculate_padrao2_g2(velas)*100),
-        "Padrao (30v) => G2: " : "%{0}".format(_calculate_padrao_1vXx_g2(velas)*100, 30),
-        "Padrao (20v) => G2: " : "%{0}".format(_calculate_padrao_1vXx_g2(velas)*100, 20),
-        "Padrao (10v) => G2: " : "%{0}".format(_calculate_padrao_1vXx_g2(velas)*100, 10),
-        "Padrao (9v) => G2: " : "%{0}".format(_calculate_padrao_1vXx_g2(velas)*100, 9),
-        "Padrao (8v) => G2: " : "%{0}".format(_calculate_padrao_1vXx_g2(velas)*100, 8),
-        "Padrao (7v) => G2: " : "%{0}".format(_calculate_padrao_1vXx_g2(velas)*100, 7),
-        "Padrao (6v) => G2: " : "%{0}".format(_calculate_padrao_1vXx_g2(velas)*100, 6),
-        "Padrao (5v) => G2: " : "%{0}".format(_calculate_padrao_1vXx_g2(velas)*100, 5),
-        "Padrao (4v) => G2: " : "%{0}".format(_calculate_padrao_1vXx_g2(velas)*100, 4),
-        "Padrao (3v) => G2: " : "%{0}".format(_calculate_padrao_1vXx_g2(velas)*100, 3),
-        "Padrao (1.5p, 1.5p) => G2: " : "%{0}".format(calculate_padrao_2p_15x_g2(velas)*100),
-        "Padrao (1.4p, 1.4p) => G2: " : "%{0}".format(calculate_padrao_2p_14x_g2(velas)*100),
-        "Padrao (1.3p, 1.3p) => G2: " : "%{0}".format(calculate_padrao_2p_13x_g2(velas)*100),
-        "Padrao (1.2p, 1.2p) => G2: " : "%{0}".format(calculate_padrao_2p_12x_g2(velas)*100),
-        "Padrao (1.1p, 1.1p) => G2: " : "%{0}".format(calculate_padrao_2p_11x_g2(velas)*100),
-    }
 
 def get_estrategias(qtd_velas):
     # Padrao a => 5x3min
@@ -46,21 +24,26 @@ def get_estrategias(qtd_velas):
     }
 
 def media_intervalo_tempo(velas = []):
-    print(velas)
+    if not velas:
+        return "Nenhuma."
+    
     qtd_intervals = 0
     seconds_total = 0
     for i in range(len(velas)-1):
-        seconds_diff = (velas[i][1] - velas[i+1][1]).total_seconds()
+        velaCreated1 = datetime.datetime.strptime(velas[i]["created"], "%a, %d %b %Y %H:%M:%S GMT")
+        velaCreated2 = datetime.datetime.strptime(velas[i+1]["created"], "%a, %d %b %Y %H:%M:%S GMT")
+        seconds_diff = (velaCreated1 - velaCreated2).total_seconds()
         seconds_total += seconds_diff
         qtd_intervals += 1
+    
     return '{0:.2f}min'.format((seconds_total/qtd_intervals) / 60)
 
 def media_velas(qtd_velas):
     intervalos = dict()
-    velas3x = fetch_crash_points_at_least(qtd_velas, 3, 5)
-    velas5x = fetch_crash_points_at_least(qtd_velas, 5, 10)
-    velas10x = fetch_crash_points_at_least(qtd_velas, 10,100)
-    velas100x = fetch_crash_points_at_least(qtd_velas, 100, 1000)
+    velas3x = _fetch_crash_points_at_least(qtd_velas, 3, 5)
+    velas5x = _fetch_crash_points_at_least(qtd_velas, 5, 10)
+    velas10x = _fetch_crash_points_at_least(qtd_velas, 10,100)
+    velas100x = _fetch_crash_points_at_least(qtd_velas, 100, 1000)
 
     intervalos['3x'] = media_intervalo_tempo(velas3x)
     intervalos['5x'] = media_intervalo_tempo(velas5x)
@@ -70,24 +53,26 @@ def media_velas(qtd_velas):
     return intervalos 
 
 def _probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
-    velas = list(reversed(fetch_crash_object(qtd_velas)))
+    velas = list(reversed(fetch_crash_points(qtd_velas)))
     found_vela = None
     tries = 0
     hit = 0
     galhos = []
-    hora_entrada = None
 
     for vela in velas:
-        if not found_vela and vela[0] >= minVela and vela[0] < maxVela:
+        if not found_vela and vela['vela'] >= minVela and vela['vela'] < maxVela:
             found_vela = vela
             continue
         
         if found_vela:
-            vela_entrada = found_vela 
-            minutes_diff = (vela[1] - found_vela[1]).total_seconds() / 60
+            vela_entrada = found_vela
+            velaCreated1 = datetime.datetime.strptime(vela["created"], "%a, %d %b %Y %H:%M:%S GMT")
+            velaCreated2 = datetime.datetime.strptime(found_vela["created"], "%a, %d %b %Y %H:%M:%S GMT")
+
+            minutes_diff = (velaCreated1 - velaCreated2).total_seconds() / 60
             if minutes_diff >= minutos:
                 if len(galhos) < 2:
-                    galhos.append(vela[0])
+                    galhos.append(vela['vela'])
                     continue
 
                 tries += 1
@@ -98,7 +83,7 @@ def _probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
    
     return {
         "assertividade": "0%" if hit == tries == 0 else "{:.0%}".format(hit/tries),
-        "vela_selecionada": vela_entrada[0]
+        "vela_selecionada": vela_entrada
     }
 
 def fetch_contagem_cores(qtd_velas):
@@ -107,7 +92,7 @@ def fetch_contagem_cores(qtd_velas):
     qtdPreta = qtdVerde = 0
 
     for vela in velas:
-        if vela >= 2:
+        if vela["vela"] >= 2:
             qtdVerde += 1
         else:
             qtdPreta += 1
@@ -120,4 +105,7 @@ def fetch_contagem_cores(qtd_velas):
     return contagem
 
 def fetch_velas(qtd_velas):
-    return list(map( lambda velaObg: { "vela": velaObg[0], "created": velaObg[1]}, fetch_crash_object(qtd_velas)))
+    return list(map( lambda velaObg: { "vela": velaObg["vela"], "platform": velaObg["platform"], "created": velaObg["created"]}, fetch_crash_points(qtd_velas)))
+
+def _fetch_crash_points_at_least( howMany, atLeast, atMost):
+    return list(filter( lambda vela: vela["vela"] >= atLeast and vela["vela"] < atMost, fetch_crash_points(howMany)))

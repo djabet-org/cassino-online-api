@@ -1,8 +1,8 @@
 # This file is part of https://github.com/jainamoswal/Flask-Example.
 # Usage covered in <IDC lICENSE>
 # Jainam Oswal. <jainam.me> 
-from .crash_manager import calcular_probabilidades, media_velas, fetch_contagem_cores, get_estrategias, fetch_velas
-from .sqlite_helper import deletar_velas_antigas
+from .crash_manager import media_velas, fetch_contagem_cores, get_estrategias, fetch_velas
+from .cassino_database_manager import deletar_velas_antigas
 
 # Import Libraries 
 from app import app
@@ -48,25 +48,6 @@ def delete(qtd):
     app.logger.info("deleted!")
 
     return "deleted!", 204
-
-@app.route('/api/blaze/crash/probabilidades')
-def probabilidades():
-  # try:
-    max_velas = request.args.get("max_velas", default="200")
-    app.logger.info(max_velas)
-    velas = fetch_velas(max_velas)
-
-    result = calcular_probabilidades(velas)
-    app.logger.info("creu ", result)
-    qtd_velas = len(velas)
-    result["qtd_velas"] = qtd_velas
-    # if qtd_velas > 1000:
-      # deletar_velas_antigas(str(qtd_velas-int(max_velas)))
-
-    # return in JSON format. (For API)
-    return jsonify(result)
-  # except:
-  #   return jsonify("errorrrr")
 
 @app.route('/api/blaze/crash/contagemCores')
 def contagemCores():
