@@ -25,16 +25,18 @@ def probabilidade_soma_digitos_minutagem(qtd_velas, minVela, maxVela):
     galhos = []
 
     for vela in velas:
-        if not found_vela and vela[0] >= minVela and vela[0] < maxVela:
+        if not found_vela and vela['vela'] >= minVela and vela['vela'] < maxVela:
             found_vela = vela
             continue
         
         if found_vela:
             vela_entrada = found_vela
-            minutes_diff = (vela[1] - found_vela[1]).total_seconds() / 60
-            if minutes_diff >= _sumDigits(found_vela[0]):
+            velaCreatedDate = datetime.datetime.strptime(vela["created"], "%a, %d %b %Y %H:%M:%S GMT")
+            velaFoundCreatedDate = datetime.datetime.strptime(found_vela["created"], "%a, %d %b %Y %H:%M:%S GMT")
+            minutes_diff = (velaCreatedDate - velaFoundCreatedDate).total_seconds() / 60
+            if minutes_diff >= _sumDigits(found_vela['vela']):
                 if len(galhos) < 2:
-                    galhos.append(vela[0])
+                    galhos.append(vela['vela'])
                     continue
 
                 tries += 1
@@ -45,7 +47,7 @@ def probabilidade_soma_digitos_minutagem(qtd_velas, minVela, maxVela):
    
     return {
         "assertividade": "0%" if hit == tries == 0 else "{:.0%}".format(hit/tries),
-        "vela_selecionada": vela_entrada[0]
+        "vela_selecionada": vela_entrada['vela'] if vela_entrada else 'Nenhuma'
     }
 
 def media_intervalo_tempo(velas = []):
