@@ -6,7 +6,7 @@ import requests
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-base_url = "http://127.0.0.1:5000" if os.getenv("ENV") else "https://cassino-database-manager-production.up.railway.app"
+base_url = "https://cassino-database-manager-production.up.railway.app" if os.getenv("ENV") else "http://127.0.0.1:5000"
 
 def fetch_crash_points( howMany):
 
