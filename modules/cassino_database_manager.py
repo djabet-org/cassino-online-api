@@ -17,29 +17,6 @@ def fetch_crash_points( howMany):
 
     return response_json
 
-# def fetch_crash_points( at_least, startTime, endTime):
-
-#     sqliteConnection = None
-
-#     try:
-#        if os.getenv("FLY_APP_NAME") is None:
-#             sqliteConnection = psycopg2.connect(host='localhost', database='postgres', user='aluiz', password='')
-#        else:
-#             sqliteConnection = psycopg2.connect(host='babar.db.elephantsql.com', database='zzdenalm', user='zzdenalm', password='ZArhVajSHYAd-Pux2dSdovDDaXCO1EZa')
-        
-#        cursor = sqliteConnection.cursor()
-#        sqlite_select_query = """SELECT * from crash_points"""
-#        cursor.execute(sqlite_select_query)
-#        records = list(map(lambda row: row[0], cursor.fetchall()))
-#        cursor.close()
-#        return records
-#     except psycopg2.Error as error:
-#         print("Failed to fetch crashes", error)
-#     finally:
-#         if sqliteConnection:
-#             sqliteConnection.close()
-#             # print("The SQLite connection is closed")  
-
 def deletar_velas_antigas(qtd):
 
     sqliteConnection = None
