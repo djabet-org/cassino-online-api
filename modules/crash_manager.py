@@ -24,7 +24,7 @@ def get_estrategias(qtd_velas):
     }
 
 def media_intervalo_tempo(velas = []):
-    if not velas:
+    if not velas or len(velas) == 1:
         return "Nenhuma."
     
     qtd_intervals = 0
@@ -58,6 +58,7 @@ def _probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
     tries = 0
     hit = 0
     galhos = []
+    vela_entrada = None
 
     for vela in velas:
         if not found_vela and vela['vela'] >= minVela and vela['vela'] < maxVela:
@@ -83,7 +84,7 @@ def _probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
    
     return {
         "assertividade": "0%" if hit == tries == 0 else "{:.0%}".format(hit/tries),
-        "vela_selecionada": vela_entrada['vela']
+        "vela_selecionada": vela_entrada['vela'] if vela_entrada else 'Nenhuma'
     }
 
 def fetch_contagem_cores(qtd_velas):
