@@ -91,7 +91,7 @@ def media_intervalo_tempo(velas = []):
     for i in range(len(velas)-1):
         velaCreated1 = datetime.datetime.strptime(velas[i]["created"], "%a, %d %b %Y %H:%M:%S GMT")
         velaCreated2 = datetime.datetime.strptime(velas[i+1]["created"], "%a, %d %b %Y %H:%M:%S GMT")
-        seconds_diff = (velaCreated1 - velaCreated2).total_seconds()
+        seconds_diff = (velaCreated2 - velaCreated1 ).total_seconds()
         seconds_total += seconds_diff
         qtd_intervals += 1
     
