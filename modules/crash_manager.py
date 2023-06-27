@@ -4,8 +4,14 @@ from .cassino_database_manager import fetch_crash_points
 
 def get_estrategias(velas = []):
 
+    reversedVelas = list(reversed(velas))
+
     return {
-        "padrao_vela_apos10x": probabilidade_aposXx(velas, 10, 100, 2),
+        "padrao_vela_apos3x": probabilidade_aposXx(reversedVelas, 3, 4, 2),
+        "padrao_vela_apos4x": probabilidade_aposXx(reversedVelas, 4, 5, 2),
+        "padrao_vela_apos5x": probabilidade_aposXx(reversedVelas, 5, 10, 2),
+        "padrao_vela_apos10x": probabilidade_aposXx(reversedVelas, 10, 50, 2),
+        "padrao_vela_apos50x": probabilidade_aposXx(reversedVelas, 50, 100, 2),
         "padrao_min_3x_3min": _probabilidade_padrao_minutagem(velas, 3, 5, 3),
         "padrao_min_3x_4min": _probabilidade_padrao_minutagem(velas, 3, 5, 4),
         "padrao_min_3x_5min": _probabilidade_padrao_minutagem(velas, 3, 5, 5),
@@ -27,7 +33,7 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     tries = 0
     hit = 0
     print(velas)
-    for i in range(len(velas)-galho):
+    for i in range(len(velas)):
         vela = velas[i]['vela']
         if not achou and vela >= velaMin and vela < velaMax:
             achou = True
@@ -164,7 +170,7 @@ def fetch_contagem_cores(velas = []):
     return contagem
 
 def fetch_velas(qtd_velas):
-    velas = list(reversed(fetch_crash_points(qtd_velas)))
+    velas = fetch_crash_points(qtd_velas)
     return list(map( lambda velaObg: { "vela": velaObg["vela"], "platform": velaObg["platform"], "created": velaObg["created"]},
                      velas))
 
