@@ -2,26 +2,55 @@ from __future__ import division
 import datetime
 from .cassino_database_manager import fetch_crash_points
 
-def get_estrategias(qtd_velas):
-    # Padrao a => 5x3min
-    # Padrao b => 10x3min
-    # Padrao c => 5x5min
-    # Padrao d => 10x5min
-    # Padrao e => 3x + soma digitos + add no tempo
+def get_estrategias(velas = []):
 
     return {
-        "aaa": _probabilidade_padrao_minutagem(qtd_velas, 3, 5, 3),
-        "aa": _probabilidade_padrao_minutagem(qtd_velas, 3, 5, 5),
-        "a": _probabilidade_padrao_minutagem(qtd_velas, 5, 10, 3),
-        "b": _probabilidade_padrao_minutagem(qtd_velas, 10, 50, 3),
-        "c": _probabilidade_padrao_minutagem(qtd_velas, 5, 10, 5),
-        "d": _probabilidade_padrao_minutagem(qtd_velas, 10, 50, 5),
-        "e": probabilidade_soma_digitos_minutagem(qtd_velas, 3, 4),
-        "f": probabilidade_soma_digitos_minutagem(qtd_velas, 5, 10)
+        "padrao_vela_apos10x": probabilidade_aposXx(velas, 10, 100, 2),
+        "padrao_min_3x_3min": _probabilidade_padrao_minutagem(velas, 3, 5, 3),
+        "padrao_min_3x_4min": _probabilidade_padrao_minutagem(velas, 3, 5, 4),
+        "padrao_min_3x_5min": _probabilidade_padrao_minutagem(velas, 3, 5, 5),
+        "padrao_min_5x_3min": _probabilidade_padrao_minutagem(velas, 5, 10, 3),
+        "padrao_min_5x_4min": _probabilidade_padrao_minutagem(velas, 5, 10, 4),
+        "padrao_min_5x_5min": _probabilidade_padrao_minutagem(velas, 5, 10, 5),
+        "padrao_min_10x_3min": _probabilidade_padrao_minutagem(velas, 10, 50, 3),
+        "padrao_min_10x_4min": _probabilidade_padrao_minutagem(velas, 10, 50, 4),
+        "padrao_min_10x_5min": _probabilidade_padrao_minutagem(velas, 10, 50, 5),
+        "padrao_soma_digitos_3x": probabilidade_soma_digitos_minutagem(velas, 3, 4),
+        "padrao_soma_digitos_4x": probabilidade_soma_digitos_minutagem(velas, 4, 5),
+        "padrao_soma_digitos_5x": probabilidade_soma_digitos_minutagem(velas, 5, 6),
+        "padrao_soma_digitos_6x": probabilidade_soma_digitos_minutagem(velas, 6, 10)
     }
 
-def probabilidade_soma_digitos_minutagem(qtd_velas, minVela, maxVela):
-    velas = list(reversed(fetch_crash_points(qtd_velas)))
+def probabilidade_aposXx(velas, velaMin, velaMax, galho):
+    achou = False
+    g = galho
+    tries = 0
+    hit = 0
+    print(velas)
+    for i in range(len(velas)-galho):
+        vela = velas[i]['vela']
+        if not achou and vela >= velaMin and vela < velaMax:
+            achou = True
+            tries += 1
+            continue
+        if achou:
+            if not g:
+                achou = False
+                continue 
+            if vela >= 2:
+                hit += 1
+                achou = False
+                continue
+            g -= 1
+
+    print(hit)
+    print(tries)
+    
+    return {
+        "assertividade": "0%" if hit == tries == 0 else "{:.0%}".format(hit/tries)
+    }
+
+def probabilidade_soma_digitos_minutagem(velas, minVela, maxVela):
     found_vela = None
     tries = 0
     hit = 0
@@ -68,12 +97,12 @@ def media_intervalo_tempo(velas = []):
     
     return '{0:.2f}min'.format((seconds_total/qtd_intervals) / 60)
 
-def media_velas(qtd_velas):
+def media_velas(velas = []):
     intervalos = dict()
-    velas3x = _fetch_crash_points_at_least(qtd_velas, 3, 5)
-    velas5x = _fetch_crash_points_at_least(qtd_velas, 5, 10)
-    velas10x = _fetch_crash_points_at_least(qtd_velas, 10,100)
-    velas100x = _fetch_crash_points_at_least(qtd_velas, 100, 1000)
+    velas3x = _fetch_crash_points_at_least(velas, 3, 5)
+    velas5x = _fetch_crash_points_at_least(velas, 5, 10)
+    velas10x = _fetch_crash_points_at_least(velas, 10,100)
+    velas100x = _fetch_crash_points_at_least(velas, 100, 1000)
 
     intervalos['3x'] = media_intervalo_tempo(velas3x)
     intervalos['5x'] = media_intervalo_tempo(velas5x)
@@ -82,29 +111,7 @@ def media_velas(qtd_velas):
 
     return intervalos 
 
-def fetch_contagem_cores(qtd_velas):
-    velas = fetch_crash_points(qtd_velas)
-    contagem = dict()
-    qtdPreta = qtdVerde = 0
-
-    for vela in velas:
-        if vela >= 2:
-            qtdVerde += 1
-        else:
-            qtdPreta += 1
-
-    contagem['qtdPreta'] = qtdPreta
-    contagem['qtdVerde'] = qtdVerde
-    contagem['percentagePreta'] = "{:.0%}".format(qtdPreta/int(qtd_velas))
-    contagem['percentageVerde'] = "{:.0%}".format(qtdVerde/int(qtd_velas))
-
-    return contagem
-
-def fetch_velas(qtd_velas):
-    return list(map( lambda velaObg: { "vela": velaObg[0], "created": velaObg[1]}, fetch_crash_object(qtd_velas)))
-
-def _probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
-    velas = list(reversed(fetch_crash_points(qtd_velas)))
+def _probabilidade_padrao_minutagem(velas, minVela, maxVela, minutos):
     found_vela = None
     tries = 0
     hit = 0
@@ -138,10 +145,10 @@ def _probabilidade_padrao_minutagem(qtd_velas, minVela, maxVela, minutos):
         "vela_selecionada": vela_entrada['vela'] if vela_entrada else 'Nenhuma'
     }
 
-def fetch_contagem_cores(qtd_velas):
-    velas = fetch_crash_points(qtd_velas)
+def fetch_contagem_cores(velas = []):
     contagem = dict()
     qtdPreta = qtdVerde = 0
+    qtd_velas = len(velas)
 
     for vela in velas:
         if vela["vela"] >= 2:
@@ -157,10 +164,13 @@ def fetch_contagem_cores(qtd_velas):
     return contagem
 
 def fetch_velas(qtd_velas):
-    return list(map( lambda velaObg: { "vela": velaObg["vela"], "platform": velaObg["platform"], "created": velaObg["created"]}, fetch_crash_points(qtd_velas)))
+    velas = list(reversed(fetch_crash_points(qtd_velas)))
+    return list(map( lambda velaObg: { "vela": velaObg["vela"], "platform": velaObg["platform"], "created": velaObg["created"]},
+                     velas))
 
-def _fetch_crash_points_at_least( howMany, atLeast, atMost):
-    return list(filter( lambda vela: vela["vela"] >= atLeast and vela["vela"] < atMost, fetch_crash_points(howMany)))
+def _fetch_crash_points_at_least( velas, atLeast, atMost):
+    return list(filter( lambda vela: vela["vela"] >= atLeast and vela["vela"] < atMost, velas))
+
 def _sumDigits(n):
     strr = str(n)
     list_of_number = list(map( lambda n: int(n) if n.isnumeric() else 0, strr.strip()))

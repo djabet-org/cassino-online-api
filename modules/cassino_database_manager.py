@@ -13,7 +13,7 @@ def fetch_crash_points( howMany):
     response = requests.get(base_url+"/api/cassino/manager/velas/"+ howMany)
 
     response_json = response.json()
-    print(response_json)
+    # print(response_json)
 
     return response_json
 
