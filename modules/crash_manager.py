@@ -10,11 +10,14 @@ def get_estrategias(qtd_velas):
     # Padrao e => 3x + soma digitos + add no tempo
 
     return {
+        "aaa": _probabilidade_padrao_minutagem(qtd_velas, 3, 5, 3),
+        "aa": _probabilidade_padrao_minutagem(qtd_velas, 3, 5, 5),
         "a": _probabilidade_padrao_minutagem(qtd_velas, 5, 10, 3),
         "b": _probabilidade_padrao_minutagem(qtd_velas, 10, 50, 3),
         "c": _probabilidade_padrao_minutagem(qtd_velas, 5, 10, 5),
         "d": _probabilidade_padrao_minutagem(qtd_velas, 10, 50, 5),
-        "e": probabilidade_soma_digitos_minutagem(qtd_velas, 3, 4)
+        "e": probabilidade_soma_digitos_minutagem(qtd_velas, 3, 4),
+        "f": probabilidade_soma_digitos_minutagem(qtd_velas, 5, 10)
     }
 
 def probabilidade_soma_digitos_minutagem(qtd_velas, minVela, maxVela):
