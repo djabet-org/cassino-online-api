@@ -155,8 +155,9 @@ def fetch_contagem_cores(velas = []):
     contagem = dict()
     qtdPreta = qtdVerde = 0
     qtd_velas = len(velas)
+    reversedVelas = list(reversed(velas))
 
-    for vela in velas:
+    for vela in reversedVelas:
         if vela["vela"] >= 2:
             qtdVerde += 1
         else:
