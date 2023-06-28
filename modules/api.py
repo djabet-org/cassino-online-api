@@ -23,9 +23,10 @@ def dashboard(qtd_velas):
   # return in JSON format. (For API)
 
   velas = fetch_velas(qtd_velas)
+  reversedVelas = list(reversed(velas))
   
   result = dict()
-  result['media_intervalos'] = media_velas(velas)
+  result['media_intervalos'] = media_velas(reversedVelas)
   result['estrategias'] = get_estrategias(velas)
   result['contagem_cores'] = fetch_contagem_cores(velas)
   result['velas'] = velas
