@@ -4,14 +4,12 @@ from .cassino_database_manager import fetch_crash_points
 
 def get_estrategias(velas = []):
 
-    reversedVelas = list(reversed(velas))
-
     return {
-        "padrao_vela_apos3x": probabilidade_aposXx(reversedVelas, 3, 4, 2),
-        "padrao_vela_apos4x": probabilidade_aposXx(reversedVelas, 4, 5, 2),
-        "padrao_vela_apos5x": probabilidade_aposXx(reversedVelas, 5, 10, 2),
-        "padrao_vela_apos10x": probabilidade_aposXx(reversedVelas, 10, 50, 2),
-        "padrao_vela_apos50x": probabilidade_aposXx(reversedVelas, 50, 100, 2),
+        "padrao_vela_apos3x": probabilidade_aposXx(velas, 3, 4, 2),
+        "padrao_vela_apos4x": probabilidade_aposXx(velas, 4, 5, 2),
+        "padrao_vela_apos5x": probabilidade_aposXx(velas, 5, 10, 2),
+        "padrao_vela_apos10x": probabilidade_aposXx(velas, 10, 50, 2),
+        "padrao_vela_apos50x": probabilidade_aposXx(velas, 50, 100, 2),
         "padrao_min_3x_3min": _probabilidade_padrao_minutagem(velas, 3, 5, 3),
         "padrao_min_3x_4min": _probabilidade_padrao_minutagem(velas, 3, 5, 4),
         "padrao_min_3x_5min": _probabilidade_padrao_minutagem(velas, 3, 5, 5),
@@ -32,7 +30,7 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     g = galho
     tries = 0
     hit = 0
-    print(velas)
+    # print(velas)
     for i in range(len(velas)):
         vela = velas[i]['vela']
         if not achou and vela >= velaMin and vela < velaMax:
@@ -53,7 +51,7 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     print(tries)
     
     return {
-        "assertividade": "0%" if hit == tries == 0 else "{:.0%}".format(hit/tries)
+        "assertividade": "0%" if not hit and not tries else "{:.0%}".format(hit/tries)
     }
 
 def probabilidade_soma_digitos_minutagem(velas, minVela, maxVela):
@@ -155,9 +153,8 @@ def fetch_contagem_cores(velas = []):
     contagem = dict()
     qtdPreta = qtdVerde = 0
     qtd_velas = len(velas)
-    reversedVelas = list(reversed(velas))
 
-    for vela in reversedVelas:
+    for vela in velas:
         if vela["vela"] >= 2:
             qtdVerde += 1
         else:

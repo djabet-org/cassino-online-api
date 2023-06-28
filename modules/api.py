@@ -27,8 +27,8 @@ def dashboard(qtd_velas):
   
   result = dict()
   result['media_intervalos'] = media_velas(reversedVelas)
-  result['estrategias'] = get_estrategias(velas)
-  result['contagem_cores'] = fetch_contagem_cores(velas)
+  result['estrategias'] = get_estrategias(reversedVelas)
+  result['contagem_cores'] = fetch_contagem_cores(reversedVelas)
   result['velas'] = velas
   return jsonify(result)
 
