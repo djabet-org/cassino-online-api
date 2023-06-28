@@ -10,6 +10,7 @@ def get_estrategias(velas = []):
         "padrao_vela_apos5x": probabilidade_aposXx(velas, 5, 10, 2),
         "padrao_vela_apos10x": probabilidade_aposXx(velas, 10, 50, 2),
         "padrao_vela_apos50x": probabilidade_aposXx(velas, 50, 100, 2),
+        "padrao_vela_apos100x": probabilidade_aposXx(velas, 100, 2000, 2),
         "padrao_min_3x_3min": _probabilidade_padrao_minutagem(velas, 3, 5, 3),
         "padrao_min_3x_4min": _probabilidade_padrao_minutagem(velas, 3, 5, 4),
         "padrao_min_3x_5min": _probabilidade_padrao_minutagem(velas, 3, 5, 5),
