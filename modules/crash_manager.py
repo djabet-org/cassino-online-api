@@ -32,7 +32,7 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     tries = 0
     hit = 0
     # print(velas)
-    for i in range(len(velas)):
+    for i in range(len(velas)-1):
         vela = velas[i]['vela']
         if not achou and vela >= velaMin and vela < velaMax:
             achou = True
