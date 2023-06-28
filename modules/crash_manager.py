@@ -56,10 +56,10 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
 
 def probabilidade_soma_digitos_minutagem(velas, minVela, maxVela):
     found_vela = None
+    vela_entrada = None
     tries = 0
     hit = 0
     galhos = []
-
     for vela in velas:
         if not found_vela and vela['vela'] >= minVela and vela['vela'] < maxVela:
             found_vela = vela
