@@ -6,15 +6,19 @@ import requests
 
 BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
-base_url = "https://cassino-database-manager-production.up.railway.app" if os.getenv("ENV") else "http://127.0.0.1:5000"
+base_url = "https://cassino-database-manager-production.up.railway.app"
 
 def fetch_crash_points( howMany):
 
     response = requests.get(base_url+"/api/cassino/manager/velas/"+ howMany)
 
     response_json = response.json()
-    # print(response_json)
 
+    return response_json
+
+def fetch_how_many_crash_points():
+    response = requests.get(base_url+"/api/cassino/manager/velas/howMany")
+    response_json = response.json()
     return response_json
 
 def deletar_velas_antigas(qtd):

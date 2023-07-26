@@ -1,6 +1,6 @@
 from __future__ import division
 import datetime
-from .cassino_database_manager import fetch_crash_points
+from .cassino_database_manager import fetch_crash_points, fetch_how_many_crash_points
 
 
 def get_estrategias(velas=[]):
@@ -49,7 +49,7 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
         if achou:
             if not g:
                 achou = False
-                continue 
+                continue
             if vela >= 2:
                 hit += 1
                 achou = False
@@ -58,10 +58,11 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
 
     print(hit)
     print(tries)
-    
+
     return {
         "assertividade": "0%" if not hit and not tries else "{:.0%}".format(hit/tries)
     }
+
 
 def probabilidade_soma_digitos_minutagem(velas, minVela, maxVela):
     found_vela = None
@@ -193,6 +194,8 @@ def fetch_velas(qtd_velas):
     return list(map(lambda velaObg: {"vela": velaObg["vela"], "platform": velaObg["platform"], "created": velaObg["created"]},
                     velas))
 
+def fetch_how_many_velas():
+    return fetch_how_many_crash_points()["total"]
 
 def _fetch_crash_points_at_least(velas, atLeast, atMost):
     return list(filter(lambda vela: vela["vela"] >= atLeast and vela["vela"] < atMost, velas))
