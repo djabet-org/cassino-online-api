@@ -5,10 +5,8 @@ from .crash_manager import media_velas, fetch_contagem_cores, get_estrategias, f
 
 # Import Libraries 
 from app import app
-from flask import jsonify, request
+from flask import jsonify
 # from flask_socketio import send, emit
-import datetime
-import pytz
 # @socketio.on('opa')
 # def handle_json(msg):
 #     print('msg: ' + str(msg))
