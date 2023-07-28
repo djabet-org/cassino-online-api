@@ -19,11 +19,10 @@ def api():
   # return in JSON format. (For API)
   return jsonify({"message":"Hello from Flask!"})
 
-@app.route('/api/blaze/crash/dashboard/<qtd_velas>')
-def dashboard(qtd_velas):
+@app.route('/api/<platform>/crash/dashboard/<qtd_velas>')
+def dashboard(platform, qtd_velas):
   # return in JSON format. (For API)
-
-  velas = fetch_velas(qtd_velas)
+  velas = fetch_velas(platform, qtd_velas)
   reversedVelas = list(reversed(velas))
   
   result = dict()

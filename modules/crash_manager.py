@@ -189,8 +189,8 @@ def fetch_contagem_cores(velas=[]):
     return contagem
 
 
-def fetch_velas(qtd_velas):
-    velas = fetch_crash_points(qtd_velas)
+def fetch_velas(platform, qtd_velas):
+    velas = fetch_crash_points(platform, qtd_velas)
     return list(map(lambda velaObg: {"vela": velaObg["vela"], "platform": velaObg["platform"], "created": velaObg["created"]},
                     velas))
 

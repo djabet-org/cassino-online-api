@@ -8,9 +8,9 @@ BASE_DIR = os.path.dirname(os.path.abspath(__file__))
 
 base_url = "https://cassino-database-manager-production.up.railway.app"
 
-def fetch_crash_points( howMany):
+def fetch_crash_points( platform, howMany):
 
-    response = requests.get(base_url+"/api/cassino/manager/velas/"+ howMany)
+    response = requests.get("{}/api/{}/repository/velas/{}".format(base_url, platform, howMany))
 
     response_json = response.json()
 
