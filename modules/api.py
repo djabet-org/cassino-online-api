@@ -31,7 +31,7 @@ def dashboard(platform, qtd_velas):
   result['estrategias'] = get_estrategias(reversedVelas)
   result['contagem_cores'] = fetch_contagem_cores(reversedVelas)
   result['velas'] = velas
-  result['qtd_velas_total'] = fetch_how_many_velas()
+  # result['qtd_velas_total'] = fetch_how_many_velas()
   return jsonify(result)
 
 @app.route('/api/blaze/crash/delete/<qtd_velas>', methods=["DELETE"])
