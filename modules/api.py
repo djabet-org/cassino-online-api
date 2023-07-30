@@ -6,6 +6,8 @@ from .crash_manager import media_velas, fetch_contagem_cores, get_estrategias, f
 # Import Libraries 
 from app import app
 from flask import jsonify
+from flask_cors import cross_origin
+
 # from flask_socketio import send, emit
 # @socketio.on('opa')
 # def handle_json(msg):
@@ -18,6 +20,7 @@ def api():
   return jsonify({"message":"Hello from Flask!"})
 
 @app.route('/api/<platform>/crash/dashboard/<qtd_velas>')
+@cross_origin()
 def dashboard(platform, qtd_velas):
   # return in JSON format. (For API)
   velas = fetch_velas(platform, qtd_velas)

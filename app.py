@@ -5,9 +5,12 @@
 
 # Import Libraries 
 from flask import Flask
+from flask_cors import CORS
 
-# Define app.
 app = Flask(__name__)
+cors = CORS(app)
+app.config['CORS_HEADERS'] = 'Content-Type'
+# Define app.
 
 # Import the __init__.py from modules which had imported all files from the folder.
 import modules
