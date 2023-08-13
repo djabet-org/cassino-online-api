@@ -7,12 +7,12 @@ def get_estrategias(velas=[]):
 
     return {
         "apos_Xx": {
-            "padrao_vela_apos3x": probabilidade_aposXx(velas, 3, 4, 2),
-            "padrao_vela_apos4x": probabilidade_aposXx(velas, 4, 5, 2),
-            "padrao_vela_apos5x": probabilidade_aposXx(velas, 5, 10, 2),
-            "padrao_vela_apos10x": probabilidade_aposXx(velas, 10, 50, 2),
-            "padrao_vela_apos50x": probabilidade_aposXx(velas, 50, 100, 2),
-            "padrao_vela_apos100x": probabilidade_aposXx(velas, 100, 2000, 2),
+            "padrao_vela_apos3x": probabilidade_aposXx(velas, 3, 4, 1),
+            "padrao_vela_apos4x": probabilidade_aposXx(velas, 4, 5, 1),
+            "padrao_vela_apos5x": probabilidade_aposXx(velas, 5, 10, 1),
+            "padrao_vela_apos10x": probabilidade_aposXx(velas, 10, 50, 1),
+            "padrao_vela_apos50x": probabilidade_aposXx(velas, 50, 100, 1),
+            "padrao_vela_apos100x": probabilidade_aposXx(velas, 100, 2000, 1),
         },
         "minutagem": {
             "padrao_min_3x_3min": _probabilidade_padrao_minutagem(velas, 3, 5, 3),
@@ -36,25 +36,21 @@ def get_estrategias(velas=[]):
 
 def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     achou = False
-    g = galho
     tries = 0
     hit = 0
     # print(velas)
-    for i in range(len(velas)-1):
+    for i in range(len(velas)-1):        
         vela = velas[i]['vela']
         if not achou and vela >= velaMin and vela < velaMax:
             achou = True
             tries += 1
-            continue
         if achou:
-            if not g:
-                achou = False
-                continue
-            if vela >= 2:
+            targetVelas = velas[i+1:i+2+galho]
+            anyGreen = any(_isGreen(targetVela) for targetVela in targetVelas)
+            if anyGreen:
                 hit += 1
-                achou = False
-                continue
-            g -= 1
+            achou = False
+    
 
     print(hit)
     print(tries)
@@ -63,6 +59,8 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
         "assertividade": "0%" if not hit and not tries else "{:.0%}".format(hit/tries)
     }
 
+def _isGreen(velaObj):
+    return velaObj['vela'] >= 2
 
 def probabilidade_soma_digitos_minutagem(velas, minVela, maxVela):
     found_vela = None

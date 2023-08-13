@@ -23,14 +23,14 @@ def api():
 @cross_origin()
 def dashboard(platform, qtd_velas):
   # return in JSON format. (For API)
-  velas = fetch_velas(platform, qtd_velas)
-  reversedVelas = list(reversed(velas))
+  descVelas = fetch_velas(platform, qtd_velas)
+  ascVelas = list(reversed(descVelas))
   
   result = dict()
-  result['media_intervalos'] = media_velas(reversedVelas)
-  result['estrategias'] = get_estrategias(reversedVelas)
-  result['contagem_cores'] = fetch_contagem_cores(reversedVelas)
-  result['velas'] = velas
+  result['media_intervalos'] = media_velas(ascVelas)
+  result['estrategias'] = get_estrategias(ascVelas)
+  result['contagem_cores'] = fetch_contagem_cores(ascVelas)
+  result['velas'] = descVelas
   # result['qtd_velas_total'] = fetch_how_many_velas()
   return jsonify(result)
 

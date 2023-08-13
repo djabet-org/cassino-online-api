@@ -12,88 +12,100 @@ from datetime import datetime, timedelta
 
 class TestManager(unittest.TestCase):
 
-    # def test_probabilidade_apos10x_a(self):
-    #     velas = [
-    #         { 'vela': 10 },
-    #         { 'vela': 2 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 10 },
-    #         { 'vela': 1 },
-    #         { 'vela': 2 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 10 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 }
-    #     ]
+    targetX = 3
 
-    #     result = probabilidade_aposXx(velas, 10, 20, 2)
-    #     self.assertEqual(result['assertividade'], '67%')
-
-    # def test_probabilidade_apos10x_b(self):
-    #     velas = [
-    #         { 'vela': 10 },
-    #         { 'vela': 2 },
-    #         { 'vela': 2 },
-    #         { 'vela': 10 },
-    #         { 'vela': 2 },
-    #         { 'vela': 10 },
-    #         { 'vela': 1 },
-    #     ]
-
-    #     result = probabilidade_aposXx(velas, 10, 20, 2)
-
-    #     self.assertEqual(result['assertividade'], '67%')  
-
-    # def test_probabilidade_apos10x_c(self):
-    #     velas = [
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 10 },
-    #         { 'vela': 1 },
-    #         { 'vela': 10 },
-    #     ]
-
-    #     result = probabilidade_aposXx(velas, 10, 20, 2)
-
-    #     self.assertEqual(result['assertividade'], '0%')
-
-    # def test_probabilidade_apos10x_d(self):
-    #     velas = [
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #         { 'vela': 10 },
-    #         { 'vela': 1 },
-    #         { 'vela': 1 },
-    #     ]
-
-    #     result = probabilidade_aposXx(velas, 10, 20, 2)
-
-    #     self.assertEqual(result['assertividade'], '0%')
-
-    def test_probabilidade_apos10x_e(self):
+    def test_probabilidade_aposXx_g0(self):
         velas = [
-            { 'vela': 10 },
-            { 'vela': 10 },
-            { 'vela': 10 },
-            { 'vela': 10 },
-            { 'vela': 10 },
-            { 'vela': 10 },
-            { 'vela': 10 },
+            { 'vela': self.targetX },
+            { 'vela': 2 },
+            { 'vela': 1 },
+            { 'vela': 1 },
+            { 'vela': self.targetX },
+            { 'vela': 3 },
+            { 'vela': 2 },
+            { 'vela': 1 },
+            { 'vela': 1 },
+            { 'vela': 1 },
+            { 'vela': self.targetX },
+            { 'vela': 6 },
+            { 'vela': 1 },
+            { 'vela': 1 }
         ]
 
-        result = probabilidade_aposXx(velas, 10, 20, 2)
+        result = probabilidade_aposXx(velas, self.targetX, 4, 0)
+        self.assertEqual(result['assertividade'], '100%')
 
-        self.assertEqual(result['assertividade'], '100%')                 
+    def test_probabilidade_aposXx_g1(self):
+        velas = [
+            { 'vela': self.targetX },
+            { 'vela': 1 },
+            { 'vela': 2 },
+            { 'vela': 1 },
+            { 'vela': self.targetX },
+            { 'vela': 3 },
+            { 'vela': 2 },
+            { 'vela': 1 },
+            { 'vela': 1 },
+            { 'vela': 1 },
+            { 'vela': self.targetX },
+            { 'vela': 4 },
+            { 'vela': 1 },
+            { 'vela': 1 }
+        ]
 
+        result = probabilidade_aposXx(velas, self.targetX, 4, 1)
+        self.assertEqual(result['assertividade'], '100%') 
+
+    def test_probabilidade_aposXx_g2(self):
+        velas = [
+            { 'vela': self.targetX },
+            { 'vela': 1.99 },
+            { 'vela': 1 },
+            { 'vela': 2 },
+            { 'vela': self.targetX },
+            { 'vela': 3 },
+            { 'vela': 2 },
+            { 'vela': 1 },
+            { 'vela': 1 },
+            { 'vela': 1 },
+            { 'vela': self.targetX },
+            { 'vela': 4 },
+            { 'vela': 1 },
+            { 'vela': 1 }
+        ]
+
+        result = probabilidade_aposXx(velas, self.targetX, 4, 2)
+        self.assertEqual(result['assertividade'], '100%')
+
+    def test_probabilidade_aposXx_edge_case(self):
+        velas = [
+            { 'vela': self.targetX },
+            { 'vela': 1.99 },
+            { 'vela': 1 },
+            { 'vela': 2 },
+            { 'vela': self.targetX },
+            { 'vela': 3 },
+            { 'vela': 2 },
+            { 'vela': 1 },
+            { 'vela': 1 },
+            { 'vela': 1 },
+            { 'vela': self.targetX },
+            { 'vela': 4 }           
+        ]
+
+        result = probabilidade_aposXx(velas, self.targetX, 4, 2)
+        self.assertEqual(result['assertividade'], '100%')
+
+    def test_probabilidade_aposXx_edge_case_2(self):
+        velas = [
+            { 'vela': self.targetX },
+            { 'vela': self.targetX },           
+            { 'vela': self.targetX },                     
+            { 'vela': self.targetX },                     
+        ]
+
+        result = probabilidade_aposXx(velas, self.targetX, 4, 2)
+        self.assertEqual(result['assertividade'], '100%')            
+    
 if __name__ == '__main__':
     unittest.main()
