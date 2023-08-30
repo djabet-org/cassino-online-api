@@ -1,5 +1,5 @@
 from __future__ import division
-import datetime
+from datetime import datetime
 from .cassino_database_manager import fetch_crash_points, fetch_how_many_crash_points
 
 
@@ -38,7 +38,6 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     achou = False
     tries = 0
     hit = 0
-    # print(velas)
     for i in range(len(velas)-1):        
         vela = velas[i]['vela']
         if not achou and vela >= velaMin and vela < velaMax:
@@ -50,11 +49,6 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
             if anyGreen:
                 hit += 1
             achou = False
-    
-
-    print(hit)
-    print(tries)
-
     return {
         "assertividade": "0%" if not hit and not tries else "{:.0%}".format(hit/tries)
     }
@@ -75,10 +69,8 @@ def probabilidade_soma_digitos_minutagem(velas, minVela, maxVela):
 
         if found_vela:
             vela_entrada = found_vela
-            velaCreatedDate = datetime.datetime.strptime(
-                vela["created"], "%a, %d %b %Y %H:%M:%S GMT")
-            velaFoundCreatedDate = datetime.datetime.strptime(
-                found_vela["created"], "%a, %d %b %Y %H:%M:%S GMT")
+            velaCreatedDate = datetime.fromtimestamp(vela["created"])
+            velaFoundCreatedDate = datetime.fromtimestamp(found_vela["created"])
             minutes_diff = (velaCreatedDate -
                             velaFoundCreatedDate).total_seconds() / 60
             if minutes_diff >= _sumDigits(found_vela['vela']):
@@ -105,10 +97,8 @@ def media_intervalo_tempo(velas=[]):
     qtd_intervals = 0
     seconds_total = 0
     for i in range(len(velas)-1):
-        velaCreated1 = datetime.datetime.strptime(
-            velas[i]["created"], "%a, %d %b %Y %H:%M:%S GMT")
-        velaCreated2 = datetime.datetime.strptime(
-            velas[i+1]["created"], "%a, %d %b %Y %H:%M:%S GMT")
+        velaCreated1 = datetime.fromtimestamp(velas[i]["created"])
+        velaCreated2 = datetime.fromtimestamp(velas[i+1]["created"])
         seconds_diff = (velaCreated2 - velaCreated1).total_seconds()
         seconds_total += seconds_diff
         qtd_intervals += 1
@@ -145,10 +135,8 @@ def _probabilidade_padrao_minutagem(velas, minVela, maxVela, minutos):
 
         if found_vela:
             vela_entrada = found_vela
-            velaCreated1 = datetime.datetime.strptime(
-                vela["created"], "%a, %d %b %Y %H:%M:%S GMT")
-            velaCreated2 = datetime.datetime.strptime(
-                found_vela["created"], "%a, %d %b %Y %H:%M:%S GMT")
+            velaCreated1 = datetime.fromtimestamp(vela["created"])
+            velaCreated2 = datetime.fromtimestamp(found_vela["created"])
 
             minutes_diff = (velaCreated1 - velaCreated2).total_seconds() / 60
             if minutes_diff >= minutos:
