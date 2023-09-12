@@ -16,6 +16,14 @@ def fetch_crash_points( platform, howMany):
 
     return response_json
 
+def fetch_double_rolls( platform, howMany):
+
+    response = requests.get("{}/api/{}/double/{}".format(base_url, platform, howMany))
+
+    response_json = response.json()
+
+    return response_json
+
 def fetch_how_many_crash_points():
     response = requests.get(base_url+"/api/cassino/manager/velas/howMany")
     response_json = response.json()

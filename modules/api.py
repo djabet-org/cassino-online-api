@@ -1,7 +1,7 @@
 # This file is part of https://github.com/jainamoswal/Flask-Example.
 # Usage covered in <IDC lICENSE>
 # Jainam Oswal. <jainam.me> 
-from .crash_manager import media_velas, fetch_contagem_cores, get_estrategias, fetch_velas, fetch_how_many_velas
+from .crash_manager import media_velas, fetch_contagem_cores, get_estrategias, fetch_velas, fetch_rolls, calculate_rolls_distribution
 
 # Import Libraries 
 from app import app
@@ -31,6 +31,19 @@ def dashboard(platform, qtd_velas):
   result['estrategias'] = get_estrategias(ascVelas)
   result['contagem_cores'] = fetch_contagem_cores(ascVelas)
   result['velas'] = descVelas
+  # result['qtd_velas_total'] = fetch_how_many_velas()
+  return jsonify(result)
+
+@app.route('/api/<platform>/double/dashboard/<qtd_velas>')
+@cross_origin()
+def doubleDashboard(platform, qtd_velas):
+  # return in JSON format. (For API)
+  descRolls = fetch_rolls(platform, qtd_velas)
+  ascRolls = list(reversed(descRolls))
+  
+  result = dict()
+  result['contagem_cores'] = calculate_rolls_distribution(descRolls)
+  result['rolls'] = descRolls
   # result['qtd_velas_total'] = fetch_how_many_velas()
   return jsonify(result)
 

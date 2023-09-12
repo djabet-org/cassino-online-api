@@ -1,6 +1,6 @@
 from __future__ import division
 from datetime import datetime
-from .cassino_database_manager import fetch_crash_points, fetch_how_many_crash_points
+from .cassino_database_manager import fetch_crash_points, fetch_how_many_crash_points, fetch_double_rolls
 
 
 def get_estrategias(velas=[]):
@@ -38,7 +38,7 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     achou = False
     tries = 0
     hit = 0
-    for i in range(len(velas)-1):        
+    for i in range(len(velas)-1):
         vela = velas[i]['vela']
         if not achou and vela >= velaMin and vela < velaMax:
             achou = True
@@ -53,8 +53,10 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
         "assertividade": "0%" if not hit and not tries else "{:.0%}".format(hit/tries)
     }
 
+
 def _isGreen(velaObj):
     return velaObj['vela'] >= 2
+
 
 def probabilidade_soma_digitos_minutagem(velas, minVela, maxVela):
     found_vela = None
@@ -70,7 +72,8 @@ def probabilidade_soma_digitos_minutagem(velas, minVela, maxVela):
         if found_vela:
             vela_entrada = found_vela
             velaCreatedDate = datetime.fromtimestamp(vela["created"])
-            velaFoundCreatedDate = datetime.fromtimestamp(found_vela["created"])
+            velaFoundCreatedDate = datetime.fromtimestamp(
+                found_vela["created"])
             minutes_diff = (velaCreatedDate -
                             velaFoundCreatedDate).total_seconds() / 60
             if minutes_diff >= _sumDigits(found_vela['vela']):
@@ -174,14 +177,47 @@ def fetch_contagem_cores(velas=[]):
 
     return contagem
 
+def calculate_rolls_distribution(rolls=[]):
+    contagem = dict()
+    qtdPreta = qtdVermelha = qtdBranca = 0
+    qtd_rolls = len(rolls)
+
+    for roll in rolls:
+        if roll["color"] == "red":
+            qtdVermelha += 1
+        elif roll["color"] == "black":
+            qtdPreta += 1
+        else:
+            qtdBranca += 1    
+
+    contagem['qtdPreta'] = qtdPreta
+    contagem['qtdVermelha'] = qtdVermelha
+    contagem['qtdBranca'] = qtdBranca
+    contagem['percentagePreta'] = "{:.0%}".format(qtdPreta/int(qtd_rolls))
+    contagem['percentageVermelha'] = "{:.0%}".format(qtdVermelha/int(qtd_rolls))
+    contagem['percentageBranca'] = "{:.0%}".format(qtdBranca/int(qtd_rolls))
+
+    return contagem
+
 
 def fetch_velas(platform, qtd_velas):
     velas = fetch_crash_points(platform, qtd_velas)
     return list(map(lambda velaObg: {"vela": velaObg["vela"], "platform": velaObg["platform"], "created": velaObg["created"]},
                     velas))
 
+
+def fetch_rolls(platform, qtd_rolls):
+    rolls = fetch_double_rolls(platform, qtd_rolls)
+    return list(map(lambda rowRolls: {
+        "roll": rowRolls["roll"],
+        "platform": rowRolls["platform"],
+        "created": rowRolls["created"],
+        "color": rowRolls["color"]},
+        rolls))
+
 def fetch_how_many_velas():
     return fetch_how_many_crash_points()["total"]
+
 
 def _fetch_crash_points_at_least(velas, atLeast, atMost):
     return list(filter(lambda vela: vela["vela"] >= atLeast and vela["vela"] < atMost, velas))
