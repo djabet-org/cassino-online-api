@@ -5,12 +5,14 @@ from .crash_manager import (
     media_velas,
     fetch_contagem_cores,
     get_estrategias,
-    fetch_velas,
-    fetch_rolls,
-    calculate_rolls_distribution,
-    calculate_roll_next_color_probability,
+    fetch_velas
 )
 
+from .double_manager import (
+    calculate_roll_next_color_probability,
+    calculate_rolls_distribution,
+    fetch_rolls
+)
 
 # Import Libraries
 from app import app

@@ -30,7 +30,10 @@ def get_estrategias(velas=[]):
             "padrao_soma_digitos_4x": probabilidade_soma_digitos_minutagem(velas, 4, 5),
             "padrao_soma_digitos_5x": probabilidade_soma_digitos_minutagem(velas, 5, 6),
             "padrao_soma_digitos_6x": probabilidade_soma_digitos_minutagem(velas, 6, 10)
-        }
+        },
+         "apos_padrao_surf": {
+            "duplo": probabilidade_aposPadrao(velas, 2, 2, 3, 2),
+        },
     }
 
 
@@ -52,6 +55,20 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     return {
         "assertividade": "0%" if not hit and not tries else "{:.0%}".format(hit/tries)
     }
+
+def probabilidade_aposPadrao(velas, qtdPadrao, min, max, galho):
+    hit = total = 0
+    for i in range(len(velas)):
+        selectedVelas = velas[i:i+qtdPadrao]
+        print('selectedVelas ', selectedVelas)
+        if not all(vela['vela'] >= min and vela['vela'] <= max for vela in selectedVelas):
+            continue
+        velas2 = velas[i+qtdPadrao:i+qtdPadrao+galho+1]
+        print(velas2)
+        if any(vela['vela'] >= 2 for vela in velas2):
+            hit += 1
+        total += 1
+    return "0%" if not total else "{:.0%}".format(hit/total)
 
 
 def _isGreen(velaObj):
