@@ -32,7 +32,10 @@ def get_estrategias(velas=[]):
             "padrao_soma_digitos_6x": probabilidade_soma_digitos_minutagem(velas, 6, 10)
         },
          "apos_padrao_surf": {
-            "duplo": probabilidade_aposPadrao(velas, 2, 2, 3, 2),
+            "duplo": probabilidade_aposPadrao(velas, 2, 2, 10, 2),
+            "duplo2": probabilidade_aposPadrao(velas, 2, 2, 100, 2),
+            "triplo": probabilidade_aposPadrao(velas, 3, 2, 100, 2),
+            "quadruplo": probabilidade_aposPadrao(velas, 4, 2, 100, 2),
         },
     }
 
