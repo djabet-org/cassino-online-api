@@ -16,7 +16,7 @@ from .double_manager import (
 
 # Import Libraries
 from app import app
-from flask import jsonify
+from flask import jsonify, request
 from flask_cors import cross_origin
 
 # from flask_socketio import send, emit
@@ -32,16 +32,22 @@ def api():
     return jsonify({"message": "Hello from Flask!"})
 
 
-@app.route("/api/<platform>/crash/dashboard/<qtd_velas>")
+@app.route("/api/<platform>/crash/dashboard")
 @cross_origin()
-def dashboard(platform, qtd_velas):
+def dashboard(platform):
+    args = request.args
+    qtd_velas = args.get("qtdVelas", default=200, type=int)
+    qtd_galho = args.get("qtdGalho", default=2, type=int)
+    print(qtd_velas)
+    print(qtd_galho)
+
     # return in JSON format. (For API)
     descVelas = fetch_velas(platform, qtd_velas)
     ascVelas = list(reversed(descVelas))
 
     result = dict()
     result["media_intervalos"] = media_velas(ascVelas)
-    result["estrategias"] = get_estrategias(ascVelas)
+    result["estrategias"] = get_estrategias(ascVelas, qtd_galho)
     result["contagem_cores"] = fetch_contagem_cores(ascVelas)
     result["velas"] = descVelas
     # result['qtd_velas_total'] = fetch_how_many_velas()

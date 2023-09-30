@@ -7,7 +7,7 @@ from .cassino_database_manager import (
 )
 
 
-def get_estrategias(velas=[]):
+def get_estrategias(velas=[], qtd_galho=2):
     return {
         "apos_Xx": {
             "padrao_vela_apos3x": probabilidade_aposXx(velas, 3, 4, 1),
@@ -37,16 +37,16 @@ def get_estrategias(velas=[]):
             ),
         },
         "apos_padrao_surf": {
-            "duplo_2and10": probabilidade_aposPadrao(velas, 2, 2, 10, 2),
-            "duplo_2and100": probabilidade_aposPadrao(velas, 2, 2, 100, 2),
-            "triplo_2and100": probabilidade_aposPadrao(velas, 3, 2, 100, 2),
-            "quadruplo_2and100": probabilidade_aposPadrao(velas, 4, 2, 100, 2),
+            "duplo_2and10": probabilidade_aposPadrao(velas, 2, 2, 10, qtd_galho),
+            "duplo_2and100": probabilidade_aposPadrao(velas, 2, 2, 100, qtd_galho),
+            "triplo_2and100": probabilidade_aposPadrao(velas, 3, 2, 100, qtd_galho),
+            "quadruplo_2and100": probabilidade_aposPadrao(velas, 4, 2, 100, qtd_galho),
         },
         "padroes": {
             "xadrez": {
-                "simples": probabilidade_padrao_xadrez(velas, 1, 2),
-                "duplo": probabilidade_padrao_xadrez(velas, 2, 2),
-                "triplo": probabilidade_padrao_xadrez(velas, 3, 2),
+                "simples": probabilidade_padrao_xadrez(velas, 1, qtd_galho),
+                "duplo": probabilidade_padrao_xadrez(velas, 2, qtd_galho),
+                "triplo": probabilidade_padrao_xadrez(velas, 3, qtd_galho),
             }
         },
     }
@@ -95,9 +95,7 @@ def probabilidade_padrao_xadrez(velas, length, galho):
         mappedVelas = list(map(lambda vela: vela["vela"] >= 2, selectedVelas))
         if mappedVelas != [True, False] * length:
             continue
-        print("selectedVelas ", selectedVelas)
         galhos = velas[indexEnd : indexEnd + galho + 1]
-        print("galhos ", galhos)
         if any(vela["vela"] >= 2 for vela in galhos):
             hit += 1
         total += 1
