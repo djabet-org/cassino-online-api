@@ -2,6 +2,27 @@ from __future__ import division
 from datetime import datetime
 from .cassino_database_manager import fetch_double_rolls
 
+def get_estrategias_double(rolls = [], galho = 2):
+    return {
+     "estrategias": {
+         "numero_cor_probabilidades": calculate_rolls_distribution(rolls),
+         "surf":{
+             "duplo": {
+                "red": probabilidade_padrao_surf(rolls, 'red', 2, galho, 'red'),
+                "black": probabilidade_padrao_surf(rolls, 'black', 2, galho, 'black'),
+                "red_targetBlack": probabilidade_padrao_surf(rolls, 'red', 2, galho, 'black'),
+                "black_targetRed": probabilidade_padrao_surf(rolls, 'black', 2, galho, 'red')
+             },
+             "triplo": {
+                "red": probabilidade_padrao_surf(rolls, 'red', 3, galho, 'red'),
+                "black": probabilidade_padrao_surf(rolls, 'black', 3, galho, 'black'),
+                "red_targetBlack": probabilidade_padrao_surf(rolls, 'red', 3, galho, 'black'),
+                "black_targetRed": probabilidade_padrao_surf(rolls, 'black', 3, galho, 'red')
+             }
+         }
+     }   
+    }
+
 def calculate_rolls_distribution(rolls=[]):
     contagem = dict()
     qtdPreta = qtdVermelha = qtdBranca = 0
@@ -83,4 +104,16 @@ def fetch_rolls(platform, qtd_rolls):
         "color": rowRolls["color"]},
         rolls))
 
-
+def probabilidade_padrao_surf(rolls = [], surfColor = 'red', length=2, galho=2, targetColor = 'red'):
+    hit = total = 0
+    for i in range(len(rolls)-1):
+        surf = rolls[i : i + length]
+        if not all(roll["color"] == surfColor for roll in surf):
+            continue
+        print('surf ', surf)
+        galhos = rolls[i + length : i + length + galho + 1]
+        print('galhos ', galhos)
+        if any(roll["color"] == targetColor for roll in galhos):
+            hit += 1
+        total += 1
+    return "0%" if not total else "{:.0%}".format(hit / total)

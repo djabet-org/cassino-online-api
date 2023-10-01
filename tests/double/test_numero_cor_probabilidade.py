@@ -7,7 +7,7 @@ sys.path.insert(0, os.path.abspath(
 import modules
  
 # importing
-from modules.crash_manager import calculate_roll_next_color_probability
+from modules.double_manager import calculate_roll_next_color_probability
 from datetime import datetime, timedelta
 
 class TestManager(unittest.TestCase):
