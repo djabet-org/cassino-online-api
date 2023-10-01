@@ -17,6 +17,12 @@ def get_estrategias_double(rolls = [], galho = 2):
                 "black": probabilidade_padrao_surf(rolls, 'black', 3, galho, 'black'),
                 "red_targetBlack": probabilidade_padrao_surf(rolls, 'red', 3, galho, 'black'),
                 "black_targetRed": probabilidade_padrao_surf(rolls, 'black', 3, galho, 'red')
+             },
+             "quadruplo": {
+                "red": probabilidade_padrao_surf(rolls, 'red', 4, galho, 'red'),
+                "black": probabilidade_padrao_surf(rolls, 'black', 4, galho, 'black'),
+                "red_targetBlack": probabilidade_padrao_surf(rolls, 'red', 4, galho, 'black'),
+                "black_targetRed": probabilidade_padrao_surf(rolls, 'black', 4, galho, 'red')
              }
          }
     }
