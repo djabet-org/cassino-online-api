@@ -4,8 +4,7 @@ from .cassino_database_manager import fetch_double_rolls
 
 def get_estrategias_double(rolls = [], galho = 2):
     return {
-     "estrategias": {
-         "numero_cor_probabilidades": calculate_rolls_distribution(rolls),
+        "numero_cor_probabilidades": calculate_roll_next_color_probability(rolls),
          "surf":{
              "duplo": {
                 "red": probabilidade_padrao_surf(rolls, 'red', 2, galho, 'red'),
@@ -20,7 +19,6 @@ def get_estrategias_double(rolls = [], galho = 2):
                 "black_targetRed": probabilidade_padrao_surf(rolls, 'black', 3, galho, 'red')
              }
          }
-     }   
     }
 
 def calculate_rolls_distribution(rolls=[]):

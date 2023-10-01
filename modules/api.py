@@ -65,10 +65,6 @@ def doubleDashboard(platform, qtd_velas):
     result = dict()
     result["contagem_cores"] = calculate_rolls_distribution(descRolls)
     result["estrategias"] = get_estrategias_double(ascRolls)
-
-    result["numero_cor_probabilidades"] = calculate_roll_next_color_probability(
-        ascRolls
-    )
     result["rolls"] = descRolls
     # result['qtd_velas_total'] = fetch_how_many_velas()
     return jsonify(result)
