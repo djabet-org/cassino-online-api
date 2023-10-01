@@ -39,8 +39,6 @@ def dashboard(platform):
     args = request.args
     qtd_velas = args.get("qtdVelas", default=200, type=int)
     qtd_galho = args.get("qtdGalho", default=2, type=int)
-    print(qtd_velas)
-    print(qtd_galho)
 
     # return in JSON format. (For API)
     descVelas = fetch_velas(platform, qtd_velas)
@@ -55,16 +53,21 @@ def dashboard(platform):
     return jsonify(result)
 
 
-@app.route("/api/<platform>/double/dashboard/<qtd_velas>")
+@app.route("/api/<platform>/double/dashboard")
 @cross_origin()
-def doubleDashboard(platform, qtd_velas):
+def doubleDashboard(platform):
+
+    args = request.args
+    qtdRolls = args.get("qtdRolls", default=200, type=int)
+    galho = args.get("galho", default=2, type=int)
+
     # return in JSON format. (For API)
-    descRolls = fetch_rolls(platform, qtd_velas)
+    descRolls = fetch_rolls(platform, qtdRolls)
     ascRolls = list(reversed(descRolls))
 
     result = dict()
     result["contagem_cores"] = calculate_rolls_distribution(descRolls)
-    result["estrategias"] = get_estrategias_double(ascRolls)
+    result["estrategias"] = get_estrategias_double(ascRolls, galho)
     result["rolls"] = descRolls
     # result['qtd_velas_total'] = fetch_how_many_velas()
     return jsonify(result)
