@@ -36,18 +36,17 @@ def get_estrategias(velas=[], qtd_galho=2):
                 velas, 6, 10
             ),
         },
-        "apos_padrao_surf": {
-            "duplo_2and10": probabilidade_aposPadrao(velas, 2, 2, 10, qtd_galho),
-            "duplo_2and100": probabilidade_aposPadrao(velas, 2, 2, 100, qtd_galho),
-            "triplo_2and100": probabilidade_aposPadrao(velas, 3, 2, 100, qtd_galho),
-            "quadruplo_2and100": probabilidade_aposPadrao(velas, 4, 2, 100, qtd_galho),
-        },
         "padroes": {
             "xadrez": {
                 "simples": probabilidade_padrao_xadrez(velas, 1, qtd_galho),
                 "duplo": probabilidade_padrao_xadrez(velas, 2, qtd_galho),
                 "triplo": probabilidade_padrao_xadrez(velas, 3, qtd_galho),
-            }
+            },
+            "surf": {
+                "duplo": probabilidade_padrao_surf(velas, 2, qtd_galho),
+                "triplo": probabilidade_padrao_surf(velas, 3, qtd_galho),
+                "quadruplo": probabilidade_padrao_surf(velas, 4, qtd_galho),
+            },
         },
     }
 
@@ -72,12 +71,12 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     }
 
 
-def probabilidade_aposPadrao(velas, qtdPadrao, min, max, galho):
+def probabilidade_padrao_surf(velas, qtdPadrao, galho):
     hit = total = 0
     for i in range(len(velas)):
         selectedVelas = velas[i : i + qtdPadrao]
         if not all(
-            vela["vela"] >= min and vela["vela"] <= max for vela in selectedVelas
+            vela["vela"] >= 2 for vela in selectedVelas
         ):
             continue
         velas2 = velas[i + qtdPadrao : i + qtdPadrao + galho + 1]
