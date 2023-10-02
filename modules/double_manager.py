@@ -4,7 +4,7 @@ from .cassino_database_manager import fetch_double_rolls
 
 def get_estrategias_double(rolls = [], galho = 2):
     return {
-        "numero_cor_probabilidades": calculate_roll_next_color_probability(rolls),
+        "numero_cor_probabilidades": calculate_roll_next_color_probability(rolls, galho),
          "surf":{
              "duplo": {
                 "red": probabilidade_padrao_surf(rolls, 'red', 2, galho, 'red'),
@@ -49,7 +49,7 @@ def calculate_rolls_distribution(rolls=[]):
 
     return contagem
 
-def calculate_roll_next_color_probability(rolls = []):
+def calculate_roll_next_color_probability(rolls = [], galho = 2):
     result = dict({
         0: [0,0,0,0],
         1: [0,0,0,0],
@@ -71,9 +71,10 @@ def calculate_roll_next_color_probability(rolls = []):
 
     for i in range(len(rolls)-1):
         roll = rolls[i]
-        print(roll)
         x = result[roll["roll"]]
-        next_desired_rolls = rolls[i+1:i+4]
+        print('roll ', roll)
+        next_desired_rolls = rolls[i+1:i+galho+2]
+        print('next_desired_rolls ', next_desired_rolls)
         anyRed = any( r["color"] == "red" for r in next_desired_rolls )
         anyBlack = any( r["color"] == "black" for r in next_desired_rolls )
         anyWhite = any( r["color"] == "white" for r in next_desired_rolls )
