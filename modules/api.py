@@ -5,14 +5,15 @@ from .crash_manager import (
     media_velas,
     fetch_contagem_cores,
     get_estrategias,
-    fetch_velas
+    fetch_velas,
+    calculate_balance
 )
 
 from .double_manager import (
-    calculate_roll_next_color_probability,
     calculate_rolls_distribution,
     fetch_rolls,
-    get_estrategias_double
+    get_estrategias_double,
+    # calculate_balance_rolls
 )
 
 # Import Libraries
@@ -49,7 +50,7 @@ def dashboard(platform):
     result["estrategias"] = get_estrategias(ascVelas, qtd_galho)
     result["contagem_cores"] = fetch_contagem_cores(ascVelas)
     result["velas"] = descVelas
-    # result['qtd_velas_total'] = fetch_how_many_velas()
+    result['balance'] = calculate_balance(ascVelas)
     return jsonify(result)
 
 
@@ -69,7 +70,8 @@ def doubleDashboard(platform):
     result["contagem_cores"] = calculate_rolls_distribution(descRolls)
     result["estrategias"] = get_estrategias_double(ascRolls, galho)
     result["rolls"] = descRolls
-    # result['qtd_velas_total'] = fetch_how_many_velas()
+    # result["total_balance"] = calculate_balance_rolls(ascRolls)
+    
     return jsonify(result)
 
 @app.route("/api/blaze/crash/delete/<qtd_velas>", methods=["DELETE"])

@@ -3,7 +3,6 @@ from datetime import datetime
 from .cassino_database_manager import (
     fetch_crash_points,
     fetch_how_many_crash_points,
-    fetch_double_rolls,
 )
 
 
@@ -58,6 +57,11 @@ def get_estrategias(velas=[], qtd_galho=2):
         },
     }
 
+
+def calculate_balance(velas = []):
+    total_money = sum(vela['total_money_bets'] for vela in velas)
+    total_money_won = sum(vela['total_money_bets_won'] for vela in velas)
+    return round(total_money-total_money_won,2)
 
 def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     achou = False
@@ -297,6 +301,9 @@ def fetch_velas(platform, qtd_velas):
                 "vela": velaObg["vela"],
                 "platform": velaObg["platform"],
                 "created": velaObg["created"],
+                "total_money_bets": velaObg["total_money_bets"],
+                "total_money_bets_won": velaObg["total_money_bets_won"],
+                "total_bets_placed": velaObg["total_bets_placed"],
             },
             velas,
         )

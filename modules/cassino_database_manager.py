@@ -10,7 +10,7 @@ base_url = "https://cassino-database-manager-production.up.railway.app"
 
 def fetch_crash_points( platform, howMany):
 
-    response = requests.get("{}/api/{}/repository/velas/{}".format(base_url, platform, howMany))
+    response = requests.get("{}/api/{}/crash/{}".format(base_url, platform, howMany))
 
     response_json = response.json()
 
