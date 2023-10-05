@@ -43,10 +43,18 @@ def get_estrategias(velas=[], qtd_galho=2):
                 "triplo": probabilidade_padrao_xadrez(velas, 3, qtd_galho),
             },
             "surf": {
-                "duplo": probabilidade_padrao_surf(velas, 2, qtd_galho),
-                "triplo": probabilidade_padrao_surf(velas, 3, qtd_galho),
-                "quadruplo": probabilidade_padrao_surf(velas, 4, qtd_galho),
+                "verde": {
+                    "duplo": probabilidade_padrao_surf(velas, 2, qtd_galho),
+                    "triplo": probabilidade_padrao_surf(velas, 3, qtd_galho),
+                    "quadruplo": probabilidade_padrao_surf(velas, 4, qtd_galho),
+                },
+                "preto": {
+                    "duplo": probabilidade_padrao_surf(velas, 2, qtd_galho),
+                    "triplo": probabilidade_padrao_surf(velas, 3, qtd_galho),
+                    "quadruplo": probabilidade_padrao_surf(velas, 4, qtd_galho),
+                },
             },
+            "minutos": probabilidade_padrao_minutos(velas, qtd_galho)
         },
     }
 
@@ -75,9 +83,7 @@ def probabilidade_padrao_surf(velas, qtdPadrao, galho):
     hit = total = 0
     for i in range(len(velas)):
         selectedVelas = velas[i : i + qtdPadrao]
-        if not all(
-            vela["vela"] >= 2 for vela in selectedVelas
-        ):
+        if not all(vela["vela"] >= 2 for vela in selectedVelas):
             continue
         velas2 = velas[i + qtdPadrao : i + qtdPadrao + galho + 1]
         if any(vela["vela"] >= 2 for vela in velas2):
@@ -204,6 +210,66 @@ def _probabilidade_padrao_minutagem(velas, minVela, maxVela, minutos):
     }
 
 
+def probabilidade_padrao_minutos(velas=[], galho=2):
+    result = {
+        0: {
+            "hit": 0,
+            "tried": 0,
+        },
+        1: {
+            "hit": 0,
+            "tried": 0,
+        },
+        2: {
+            "hit": 0,
+            "tried": 0,
+        },
+        3: {
+            "hit": 0,
+            "tried": 0,
+        },
+        4: {
+            "hit": 0,
+            "tried": 0,
+        },
+        5: {
+            "hit": 0,
+            "tried": 0,
+        },
+        6: {
+            "hit": 0,
+            "tried": 0,
+        },
+        7: {
+            "hit": 0,
+            "tried": 0,
+        },
+        8: {
+            "hit": 0,
+            "tried": 0,
+        },
+        9: {
+            "hit": 0,
+            "tried": 0,
+        }
+    }
+
+    for i in range(len(velas)-1):
+        vela = velas[i]
+        dt_object = datetime.fromtimestamp(vela["created"])
+        minute = dt_object.minute % 10
+
+        galhos = velas[i + 1 : i+galho + 2]
+        if any(g["vela"] >= 2 for g in galhos):
+            result[minute]["hit"] += 1
+        result[minute]["tried"] += 1
+
+    for key in result:
+        hitTried = result[key]
+        result[key] =  "0%" if hitTried['tried'] == 0 else "{:.0%}".format(hitTried['hit']/hitTried['tried'])
+
+    return result
+
 def fetch_contagem_cores(velas=[]):
     contagem = dict()
     qtdPreta = qtdVerde = 0
@@ -222,6 +288,7 @@ def fetch_contagem_cores(velas=[]):
 
     return contagem
 
+
 def fetch_velas(platform, qtd_velas):
     velas = fetch_crash_points(platform, qtd_velas)
     return list(
@@ -234,6 +301,7 @@ def fetch_velas(platform, qtd_velas):
             velas,
         )
     )
+
 
 def fetch_how_many_velas():
     return fetch_how_many_crash_points()["total"]
