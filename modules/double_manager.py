@@ -63,8 +63,9 @@ def calculate_balance_rolls(rolls = []):
                 balance[key] -= roll[f'total_{key}_money']
             else:    
                 balance[key] += roll[f'total_{key}_money']
+            balance[key] = round(balance[key], 2)
 
-    balance['total'] = balance['black']+balance["red"]+balance["white"]
+    balance['total'] = round(balance['black']+balance["red"]+balance["white"], 2)
     return balance
 
 def calculate_roll_next_color_probability(rolls = [], galho = 2):
