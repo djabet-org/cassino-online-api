@@ -49,6 +49,24 @@ def calculate_rolls_distribution(rolls=[]):
 
     return contagem
 
+def calculate_balance_rolls(rolls = []):
+    balance = {
+        'red': 0,
+        'black': 0,
+        'white': 0,
+    }
+
+    for roll in rolls:
+        color = roll['color']
+        for key in balance:
+            if key == color:
+                balance[key] -= roll[f'total_{key}_money']
+            else:    
+                balance[key] += roll[f'total_{key}_money']
+
+    balance['total'] = balance['black']+balance["red"]+balance["white"]
+    return balance
+
 def calculate_roll_next_color_probability(rolls = [], galho = 2):
     result = dict({
         0: [0,0,0,0],
@@ -106,6 +124,10 @@ def fetch_rolls(platform, qtd_rolls):
         "roll": rowRolls["roll"],
         "platform": rowRolls["platform"],
         "created": rowRolls["created"],
+        "color": rowRolls["color"],
+        "total_red_money": rowRolls["total_red_money"],
+        "total_black_money": rowRolls["total_black_money"],
+        "total_white_money": rowRolls["total_white_money"],
         "color": rowRolls["color"]},
         rolls))
 

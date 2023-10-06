@@ -13,7 +13,7 @@ from .double_manager import (
     calculate_rolls_distribution,
     fetch_rolls,
     get_estrategias_double,
-    # calculate_balance_rolls
+    calculate_balance_rolls
 )
 
 # Import Libraries
@@ -70,7 +70,7 @@ def doubleDashboard(platform):
     result["contagem_cores"] = calculate_rolls_distribution(descRolls)
     result["estrategias"] = get_estrategias_double(ascRolls, galho)
     result["rolls"] = descRolls
-    # result["total_balance"] = calculate_balance_rolls(ascRolls)
+    result["balance"] = calculate_balance_rolls(ascRolls)
     
     return jsonify(result)
 
