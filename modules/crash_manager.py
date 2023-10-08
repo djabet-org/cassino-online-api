@@ -17,6 +17,7 @@ def get_estrategias(velas=[], qtd_galho=2):
             "padrao_vela_apos100x": probabilidade_aposXx(velas, 100, 2000, 1),
         },
         "minutagem": {
+             "minutos": probabilidade_padrao_minutos_fixo(velas, qtd_galho),
             "intervalos": probabilidade_padrao_minutos_intervalos(velas, qtd_galho),
             "padrao_min_3x_3min": _probabilidade_padrao_minutagem(velas, 3, 5, 3),
             "padrao_min_3x_4min": _probabilidade_padrao_minutagem(velas, 3, 5, 4),
@@ -54,7 +55,6 @@ def get_estrategias(velas=[], qtd_galho=2):
                     "quadruplo": probabilidade_padrao_surf(velas, 4, qtd_galho),
                 },
             },
-            "minutos": probabilidade_padrao_minutos(velas, qtd_galho)
         },
     }
 
@@ -264,7 +264,7 @@ def _probabilidade_padrao_minutagem(velas, minVela, maxVela, minutos):
     }
 
 
-def probabilidade_padrao_minutos(velas=[], galho=2):
+def probabilidade_padrao_minutos_fixo(velas=[], galho=2):
     result = {
         0: {
             "hit": 0,
@@ -312,15 +312,13 @@ def probabilidade_padrao_minutos(velas=[], galho=2):
         vela = velas[i]
         dt_object = datetime.fromtimestamp(vela["created"])
         minute = dt_object.minute % 10
-
-        galhos = velas[i + 1 : i+galho + 2]
+        galhos = velas[i : i+galho + 1]
         if any(g["vela"] >= 2 for g in galhos):
             result[minute]["hit"] += 1
         result[minute]["tried"] += 1
-
     for key in result:
         hitTried = result[key]
-        result[key] =  "0%" if hitTried['tried'] == 0 else "{:.0%}".format(hitTried['hit']/hitTried['tried'])
+        result[key] =  ("0%" if hitTried['tried'] == 0 else "{:.0%}".format(hitTried['hit']/hitTried['tried']))
 
     return result
 
