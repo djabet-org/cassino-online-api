@@ -8,16 +8,8 @@ from .cassino_database_manager import (
 
 def get_estrategias(velas=[], qtd_galho=2):
     return {
-        "apos_Xx": {
-            "padrao_vela_apos3x": probabilidade_aposXx(velas, 3, 4, 1),
-            "padrao_vela_apos4x": probabilidade_aposXx(velas, 4, 5, 1),
-            "padrao_vela_apos5x": probabilidade_aposXx(velas, 5, 10, 1),
-            "padrao_vela_apos10x": probabilidade_aposXx(velas, 10, 50, 1),
-            "padrao_vela_apos50x": probabilidade_aposXx(velas, 50, 100, 1),
-            "padrao_vela_apos100x": probabilidade_aposXx(velas, 100, 2000, 1),
-        },
         "minutagem": {
-             "minutos": probabilidade_padrao_minutos_fixo(velas, qtd_galho),
+             "minutos_fixo": probabilidade_padrao_minutos_fixo(velas, qtd_galho),
             "intervalos": probabilidade_padrao_minutos_intervalos(velas, qtd_galho),
             "padrao_min_3x_3min": _probabilidade_padrao_minutagem(velas, 3, 5, 3),
             "padrao_min_3x_4min": _probabilidade_padrao_minutagem(velas, 3, 5, 4),
