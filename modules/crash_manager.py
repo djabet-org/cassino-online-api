@@ -17,6 +17,7 @@ def get_estrategias(velas=[], qtd_galho=2):
             "padrao_vela_apos100x": probabilidade_aposXx(velas, 100, 2000, 1),
         },
         "minutagem": {
+            "intervalos": probabilidade_padrao_minutos_intervalos(velas, qtd_galho),
             "padrao_min_3x_3min": _probabilidade_padrao_minutagem(velas, 3, 5, 3),
             "padrao_min_3x_4min": _probabilidade_padrao_minutagem(velas, 3, 5, 4),
             "padrao_min_3x_5min": _probabilidade_padrao_minutagem(velas, 3, 5, 5),
@@ -56,6 +57,55 @@ def get_estrategias(velas=[], qtd_galho=2):
             "minutos": probabilidade_padrao_minutos(velas, qtd_galho)
         },
     }
+
+def probabilidade_padrao_minutos_intervalos( velas = [], galho = 2):
+    result = {
+        3: {
+            "hit": 0,
+            "tried": 0,
+        },
+        4: {
+            "hit": 0,
+            "tried": 0,
+        },
+        5: {
+            "hit": 0,
+            "tried": 0,
+        },
+        6: {
+            "hit": 0,
+            "tried": 0,
+        },
+        7: {
+            "hit": 0,
+            "tried": 0,
+        },
+        8: {
+            "hit": 0,
+            "tried": 0,
+        },
+        9: {
+            "hit": 0,
+            "tried": 0,
+        }
+    }
+
+    for i in range(len(velas)-1):
+        vela = velas[i]
+        dt_object = datetime.fromtimestamp(vela["created"])
+        minute = dt_object.minute
+        for key in result:
+            if not minute % key:
+                galhos = velas[i : i+galho + 1]
+                if any(g["vela"] >= 2 for g in galhos):
+                    result[key]["hit"] += 1
+                result[key]["tried"] += 1
+
+    for key in result:
+        hitTried = result[key]
+        result[key] =  "0%" if hitTried['tried'] == 0 else "{:.0%}".format(hitTried['hit']/hitTried['tried'])
+
+    return result
 
 
 def calculate_balance(velas = []):

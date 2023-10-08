@@ -36,7 +36,7 @@ def api():
 
 @app.route("/api/<platform>/crash/dashboard")
 @cross_origin()
-def dashboard(platform):
+def crashDashboard(platform):
     args = request.args
     qtd_velas = args.get("qtdVelas", default=200, type=int)
     qtd_galho = args.get("qtdGalho", default=2, type=int)
