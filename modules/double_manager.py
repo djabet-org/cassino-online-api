@@ -9,18 +9,16 @@ def get_estrategias_double(rolls=[], galho=2):
             rolls, galho
         ),
         "minutagem": {
-            "intervalos_black": probabilidade_padrao_minutos_intervalos(
-                rolls, galho, "black"
-            ),
-            "intervalos_red": probabilidade_padrao_minutos_intervalos(
-                rolls, galho, "red"
-            ),
-             "fixo_red": probabilidade_padrao_minutos_fixo(
-                rolls, galho, "red"
-            ),
-            "fixo_black": probabilidade_padrao_minutos_fixo(
-                rolls, galho, "black"
-            ),
+            "intervalos": {
+                "black": probabilidade_padrao_minutos_intervalos(rolls, galho, "black"),
+                "red": probabilidade_padrao_minutos_intervalos(
+                    rolls, galho, "red"
+                ),
+            },
+            "fixos": {
+                "black": probabilidade_padrao_minutos_fixo(rolls, galho, "black"),
+                "red": probabilidade_padrao_minutos_fixo(rolls, galho, "red"),
+            },
         },
         "surf": {
             "duplo": {
@@ -152,6 +150,8 @@ def probabilidade_padrao_minutos_intervalos(rolls=[], galho=2, desiredColor=""):
         )
 
     return result
+
+
 def probabilidade_padrao_minutos_fixo(rolls=[], galho=2, desiredColor=""):
     result = {
         0: {
