@@ -15,6 +15,12 @@ def get_estrategias_double(rolls=[], galho=2):
             "intervalos_red": probabilidade_padrao_minutos_intervalos(
                 rolls, galho, "red"
             ),
+             "fixo_red": probabilidade_padrao_minutos_fixo(
+                rolls, galho, "red"
+            ),
+            "fixo_black": probabilidade_padrao_minutos_fixo(
+                rolls, galho, "black"
+            ),
         },
         "surf": {
             "duplo": {
@@ -143,6 +149,65 @@ def probabilidade_padrao_minutos_intervalos(rolls=[], galho=2, desiredColor=""):
             "0%"
             if hitTried["tried"] == 0
             else "{:.0%}".format(hitTried["hit"] / hitTried["tried"])
+        )
+
+    return result
+def probabilidade_padrao_minutos_fixo(rolls=[], galho=2, desiredColor=""):
+    result = {
+        0: {
+            "hit": 0,
+            "tried": 0,
+        },
+        1: {
+            "hit": 0,
+            "tried": 0,
+        },
+        2: {
+            "hit": 0,
+            "tried": 0,
+        },
+        3: {
+            "hit": 0,
+            "tried": 0,
+        },
+        4: {
+            "hit": 0,
+            "tried": 0,
+        },
+        5: {
+            "hit": 0,
+            "tried": 0,
+        },
+        6: {
+            "hit": 0,
+            "tried": 0,
+        },
+        7: {
+            "hit": 0,
+            "tried": 0,
+        },
+        8: {
+            "hit": 0,
+            "tried": 0,
+        },
+        9: {
+            "hit": 0,
+            "tried": 0,
+        },
+    }
+
+    for i in range(len(rolls) - 1):
+        roll = rolls[i]
+        dt_object = datetime.fromtimestamp(roll["created"])
+        minute = dt_object.minute % 10
+        galhos = rolls[i : i + galho + 1]
+        if any(g["color"] == desiredColor for g in galhos):
+            result[minute]["hit"] += 1
+        result[minute]["tried"] += 1
+        result[minute]["probabilidade"] = (
+            "0%"
+            if result[minute]["tried"] == 0
+            else "{:.0%}".format(result[minute]["hit"] / result[minute]["tried"])
         )
 
     return result
