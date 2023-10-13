@@ -14,98 +14,125 @@ class TestManager(unittest.TestCase):
 
     d = '2023-11-24 09:30:00.000123'
     dt = datetime.strptime(d, '%Y-%m-%d %H:%M:%S.%f')
-    velas = [
+
+    def test_probabilidade_padrao_minutos_intervalos(self):
+        velas = [ 
         {
-            "created": (dt+timedelta(minutes=3)).timestamp(),
+            "created": (self.dt+timedelta(minutes=3)).timestamp(),
             "platform": "blaze",
             "vela": 2.4
         },
         {
-            "created": (dt+timedelta(minutes=4)).timestamp(),
+            "created": (self.dt+timedelta(minutes=4)).timestamp(),
             "platform": "blaze",
             "vela": 1.43
         },
+        ]
+
+        result = probabilidade_padrao_minutos_intervalos(velas, 0)
+        self.assertEqual(result[3], '100%')
+    def test_probabilidade_padrao_minutos_intervalos_nao_achou(self):
+        velas = [ 
         {
-            "created": (dt+timedelta(minutes=4)).timestamp(),
+            "created": (self.dt+timedelta(minutes=3)).timestamp(),
             "platform": "blaze",
-            "vela": 1.43
+            "vela": 1.1
         },
         {
-            "created": (dt+timedelta(minutes=4)).timestamp(),
+            "created": (self.dt+timedelta(minutes=4)).timestamp(),
+            "platform": "blaze",
+            "vela": 1.2
+        },
+        ]
+
+        result = probabilidade_padrao_minutos_intervalos(velas, 0)
+        self.assertEqual(result[3], '0%')
+
+    def test_probabilidade_padrao_minutos_intervalos_g2(self):
+        velas = [ 
+        {
+            "created": (self.dt+timedelta(minutes=3)).timestamp(),
+            "platform": "blaze",
+            "vela": 1.1
+        },
+        {
+            "created": (self.dt+timedelta(minutes=4)).timestamp(),
+            "platform": "blaze",
+            "vela": 1.2
+        },
+        {
+            "created": (self.dt+timedelta(minutes=4)).timestamp(),
+            "platform": "blaze",
+            "vela": 3
+        },
+        ]
+
+        result = probabilidade_padrao_minutos_intervalos(velas, 2)
+        self.assertEqual(result[3], '100%')    
+    def test_probabilidade_padrao_minutos_intervalos_g2_nao_achou(self):
+        velas = [ 
+        {
+            "created": (self.dt+timedelta(minutes=3)).timestamp(),
+            "platform": "blaze",
+            "vela": 1.1
+        },
+        {
+            "created": (self.dt+timedelta(minutes=4)).timestamp(),
+            "platform": "blaze",
+            "vela": 1.2
+        },
+        {
+            "created": (self.dt+timedelta(minutes=4)).timestamp(),
+            "platform": "blaze",
+            "vela": 1.3
+        },
+        ]
+
+        result = probabilidade_padrao_minutos_intervalos(velas, 2)
+        self.assertEqual(result[3], '0%')    
+    
+    def test_probabilidade_padrao_minutos_intervalos_targetVela(self):
+        velas = [ 
+        {
+            "created": (self.dt+timedelta(minutes=3)).timestamp(),
             "platform": "blaze",
             "vela": 5
         },
         {
-            "created": (dt+timedelta(minutes=5)).timestamp(),
+            "created": (self.dt+timedelta(minutes=4)).timestamp(),
             "platform": "blaze",
-            "vela": 1.14
+            "vela": 1.1
         },
         {
-            "created":(dt+timedelta(minutes=6)).timestamp(),
+            "created": (self.dt+timedelta(minutes=4)).timestamp(),
             "platform": "blaze",
-            "vela": 1
-        },
-        {
-            "created": (dt+timedelta(minutes=7)).timestamp(),
-            "platform": "blaze",
-            "vela": 1.87
-        },
-        {
-            "created": (dt+timedelta(minutes=8)).timestamp(),
-            "platform": "blaze",
-            "vela": 1.5
-        },
-        {
-            "created": (dt+timedelta(minutes=8)).timestamp(),
-            "platform": "blaze",
-            "vela": 1.5
-        },
-        {
-            "created": (dt+timedelta(minutes=9)).timestamp(),
-            "platform": "blaze",
-            "vela": 1.5
-        },
-        {
-            "created": (dt+timedelta(minutes=10)).timestamp(),
-            "platform": "blaze",
-            "vela": 1.5
-        },
-        {
-            "created": (dt+timedelta(minutes=11)).timestamp(),
-            "platform": "blaze",
-            "vela": 1.5
-        },
-        {
-            "created": (dt+timedelta(minutes=12)).timestamp(),
-            "platform": "blaze",
-            "vela": 1.5
-        },
-        {
-            "created": (dt+timedelta(minutes=13)).timestamp(),
-            "platform": "blaze",
-            "vela": 1.5
-        },
-        {
-            "created": (dt+timedelta(minutes=14)).timestamp(),
-            "platform": "blaze",
-            "vela": 2
-        },
-        {
-            "created": (dt+timedelta(minutes=15)).timestamp(),
-            "platform": "blaze",
-            "vela": 1.5
-        },
-        {
-            "created": (dt+timedelta(minutes=16)).timestamp(),
-            "platform": "blaze",
-            "vela": 1.5
+            "vela": 1.2
         },
         ]
 
-    def test_probabilidade_padrao_minutos_intervalos(self):
-        result = probabilidade_padrao_minutos_intervalos(self.velas)
-        self.assertEqual(result[3], '40%')
-        self.assertEqual(result[4], '33%')
+        result = probabilidade_padrao_minutos_intervalos(velas, 2, 5)
+        self.assertEqual(result[3], '100%')    
+    def test_probabilidade_padrao_minutos_intervalos_targetVela_nao_achou(self):
+        velas = [ 
+        {
+            "created": (self.dt+timedelta(minutes=3)).timestamp(),
+            "platform": "blaze",
+            "vela": 4
+        },
+        {
+            "created": (self.dt+timedelta(minutes=4)).timestamp(),
+            "platform": "blaze",
+            "vela": 1.1
+        },
+        {
+            "created": (self.dt+timedelta(minutes=4)).timestamp(),
+            "platform": "blaze",
+            "vela": 1.2
+        },
+        ]
+
+        result = probabilidade_padrao_minutos_intervalos(velas, 2, 5)
+        self.assertEqual(result[3], '0%')    
 
 if __name__ == '__main__':
     unittest.main()

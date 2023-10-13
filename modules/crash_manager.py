@@ -6,51 +6,90 @@ from .cassino_database_manager import (
 )
 
 
-def get_estrategias(velas=[], qtd_galho=2):
+def get_estrategias(velas=[], qtd_galho=2, targetVela=2):
     return {
         "minutagem": {
-             "minutos_fixo": probabilidade_padrao_minutos_fixo(velas, qtd_galho),
-            "intervalos": probabilidade_padrao_minutos_intervalos(velas, qtd_galho),
-            "padrao_min_3x_3min": _probabilidade_padrao_minutagem(velas, 3, 5, 3),
-            "padrao_min_3x_4min": _probabilidade_padrao_minutagem(velas, 3, 5, 4),
-            "padrao_min_3x_5min": _probabilidade_padrao_minutagem(velas, 3, 5, 5),
-            "padrao_min_5x_3min": _probabilidade_padrao_minutagem(velas, 5, 10, 3),
-            "padrao_min_5x_4min": _probabilidade_padrao_minutagem(velas, 5, 10, 4),
-            "padrao_min_5x_5min": _probabilidade_padrao_minutagem(velas, 5, 10, 5),
-            "padrao_min_10x_3min": _probabilidade_padrao_minutagem(velas, 10, 50, 3),
-            "padrao_min_10x_4min": _probabilidade_padrao_minutagem(velas, 10, 50, 4),
-            "padrao_min_10x_5min": _probabilidade_padrao_minutagem(velas, 10, 50, 5),
-        },
-        "soma_digitos": {
-            "padrao_soma_digitos_3x": probabilidade_soma_digitos_minutagem(velas, 3, 4),
-            "padrao_soma_digitos_4x": probabilidade_soma_digitos_minutagem(velas, 4, 5),
-            "padrao_soma_digitos_5x": probabilidade_soma_digitos_minutagem(velas, 5, 6),
-            "padrao_soma_digitos_6x": probabilidade_soma_digitos_minutagem(
-                velas, 6, 10
+            "minutos_fixo": probabilidade_padrao_minutos_fixo(
+                velas, qtd_galho, targetVela
             ),
+            "intervalos": probabilidade_padrao_minutos_intervalos(
+                velas, qtd_galho, targetVela
+            ),
+            "intervalos_para_vela": {
+                "vela": {
+                    "3x": {
+                        "minuto": {
+                            "3": probabilidade_padrao_intervalos_para_velaX(
+                                velas, 3, 5, 3, targetVela
+                            ),
+                            "4": probabilidade_padrao_intervalos_para_velaX(
+                                velas, 3, 5, 4, targetVela
+                            ),
+                            "5": probabilidade_padrao_intervalos_para_velaX(
+                                velas, 3, 5, 5, targetVela
+                            ),
+                        }
+                    },
+                    "5x": {
+                        "minuto": {
+                            "3": probabilidade_padrao_intervalos_para_velaX(
+                                velas, 5, 10, 3, targetVela
+                            ),
+                            "4": probabilidade_padrao_intervalos_para_velaX(
+                                velas, 5, 10, 4, targetVela
+                            ),
+                            "5": probabilidade_padrao_intervalos_para_velaX(
+                                velas, 5, 10, 5, targetVela
+                            ),
+                        }
+                    },
+                    "10x": {
+                        "minuto": {
+                            "3": probabilidade_padrao_intervalos_para_velaX(
+                                velas, 10, 50, 3, targetVela
+                            ),
+                            "4": probabilidade_padrao_intervalos_para_velaX(
+                                velas, 10, 50, 4, targetVela
+                            ),
+                            "5": probabilidade_padrao_intervalos_para_velaX(
+                                velas, 10, 50, 5, targetVela
+                            ),
+                        },
+                    },
+                }
+            },
         },
         "padroes": {
             "xadrez": {
-                "simples": probabilidade_padrao_xadrez(velas, 1, qtd_galho),
-                "duplo": probabilidade_padrao_xadrez(velas, 2, qtd_galho),
-                "triplo": probabilidade_padrao_xadrez(velas, 3, qtd_galho),
+                "simples": probabilidade_padrao_xadrez(velas, 1, qtd_galho, targetVela),
+                "duplo": probabilidade_padrao_xadrez(velas, 2, qtd_galho, targetVela),
+                "triplo": probabilidade_padrao_xadrez(velas, 3, qtd_galho, targetVela),
             },
             "surf": {
                 "verde": {
-                    "duplo": probabilidade_padrao_surf(velas, 2, qtd_galho),
-                    "triplo": probabilidade_padrao_surf(velas, 3, qtd_galho),
-                    "quadruplo": probabilidade_padrao_surf(velas, 4, qtd_galho),
+                    "duplo": probabilidade_padrao_surf(velas, 2, qtd_galho, targetVela),
+                    "triplo": probabilidade_padrao_surf(
+                        velas, 3, qtd_galho, targetVela
+                    ),
+                    "quadruplo": probabilidade_padrao_surf(
+                        velas, 4, qtd_galho, targetVela
+                    ),
                 },
                 "preto": {
-                    "duplo": probabilidade_padrao_surf(velas, 2, qtd_galho),
-                    "triplo": probabilidade_padrao_surf(velas, 3, qtd_galho),
-                    "quadruplo": probabilidade_padrao_surf(velas, 4, qtd_galho),
+                    "duplo": probabilidade_padrao_surf(velas, 2, qtd_galho, targetVela),
+                    "triplo": probabilidade_padrao_surf(
+                        velas, 3, qtd_galho, targetVela
+                    ),
+                    "quadruplo": probabilidade_padrao_surf(
+                        velas, 4, qtd_galho, targetVela
+                    ),
                 },
             },
         },
     }
 
-def probabilidade_padrao_minutos_intervalos( velas = [], galho = 2):
+
+def probabilidade_padrao_minutos_intervalos(velas=[], galho=2, targetVela=2):
     result = {
         3: {
             "hit": 0,
@@ -79,31 +118,36 @@ def probabilidade_padrao_minutos_intervalos( velas = [], galho = 2):
         9: {
             "hit": 0,
             "tried": 0,
-        }
+        },
     }
 
-    for i in range(len(velas)-1):
+    for i in range(len(velas) - 1):
         vela = velas[i]
         dt_object = datetime.fromtimestamp(vela["created"])
         minute = dt_object.minute
         for key in result:
             if not minute % key:
-                galhos = velas[i : i+galho + 1]
-                if any(g["vela"] >= 2 for g in galhos):
+                galhos = velas[i : i + galho + 1]
+                if any(g["vela"] >= targetVela for g in galhos):
                     result[key]["hit"] += 1
                 result[key]["tried"] += 1
 
     for key in result:
         hitTried = result[key]
-        result[key] =  "0%" if hitTried['tried'] == 0 else "{:.0%}".format(hitTried['hit']/hitTried['tried'])
+        result[key] = (
+            "0%"
+            if hitTried["tried"] == 0
+            else "{:.0%}".format(hitTried["hit"] / hitTried["tried"])
+        )
 
     return result
 
 
-def calculate_balance(velas = []):
-    total_money = sum(vela['total_money_bets'] for vela in velas)
-    total_money_won = sum(vela['total_money_bets_won'] for vela in velas)
-    return round(total_money-total_money_won,2)
+def calculate_balance(velas=[]):
+    total_money = sum(vela["total_money_bets"] for vela in velas)
+    total_money_won = sum(vela["total_money_bets_won"] for vela in velas)
+    return round(total_money - total_money_won, 2)
+
 
 def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     achou = False
@@ -125,20 +169,20 @@ def probabilidade_aposXx(velas, velaMin, velaMax, galho):
     }
 
 
-def probabilidade_padrao_surf(velas, qtdPadrao, galho):
+def probabilidade_padrao_surf(velas = [], qtdPadrao = 4, galho = 2, targetVela = 2):
     hit = total = 0
     for i in range(len(velas)):
         selectedVelas = velas[i : i + qtdPadrao]
         if not all(vela["vela"] >= 2 for vela in selectedVelas):
             continue
         velas2 = velas[i + qtdPadrao : i + qtdPadrao + galho + 1]
-        if any(vela["vela"] >= 2 for vela in velas2):
+        if any(vela["vela"] >= targetVela for vela in velas2):
             hit += 1
         total += 1
     return "0%" if not total else "{:.0%}".format(hit / total)
 
 
-def probabilidade_padrao_xadrez(velas, length, galho):
+def probabilidade_padrao_xadrez(velas = [], length = 2, galho = 2, targetVela = 2):
     hit = total = 0
     for i in range(len(velas)):
         indexEnd = i + length * 2
@@ -147,7 +191,7 @@ def probabilidade_padrao_xadrez(velas, length, galho):
         if mappedVelas != [True, False] * length:
             continue
         galhos = velas[indexEnd : indexEnd + galho + 1]
-        if any(vela["vela"] >= 2 for vela in galhos):
+        if any(vela["vela"] >= targetVela for vela in galhos):
             hit += 1
         total += 1
     return "0%" if not total else "{:.0%}".format(hit / total)
@@ -155,39 +199,6 @@ def probabilidade_padrao_xadrez(velas, length, galho):
 
 def _isGreen(velaObj):
     return velaObj["vela"] >= 2
-
-
-def probabilidade_soma_digitos_minutagem(velas, minVela, maxVela):
-    found_vela = None
-    vela_entrada = None
-    tries = 0
-    hit = 0
-    galhos = []
-    for vela in velas:
-        if not found_vela and vela["vela"] >= minVela and vela["vela"] < maxVela:
-            found_vela = vela
-            continue
-
-        if found_vela:
-            vela_entrada = found_vela
-            velaCreatedDate = datetime.fromtimestamp(vela["created"])
-            velaFoundCreatedDate = datetime.fromtimestamp(found_vela["created"])
-            minutes_diff = (velaCreatedDate - velaFoundCreatedDate).total_seconds() / 60
-            if minutes_diff >= _sumDigits(found_vela["vela"]):
-                if len(galhos) < 2:
-                    galhos.append(vela["vela"])
-                    continue
-
-                tries += 1
-                if any(v > 3 for v in galhos):
-                    hit += 1
-                found_vela = None
-                galhos = []
-
-    return {
-        "assertividade": "0%" if hit == tries == 0 else "{:.0%}".format(hit / tries),
-        "vela_selecionada": vela_entrada["vela"] if vela_entrada else "Nenhuma",
-    }
 
 
 def media_intervalo_tempo(velas=[]):
@@ -221,42 +232,80 @@ def media_velas(velas=[]):
     return intervalos
 
 
-def _probabilidade_padrao_minutagem(velas, minVela, maxVela, minutos):
-    found_vela = None
+def probabilidade_padrao_minutos_soma_digitos(
+    velas=[], minVela=2, maxVela=2, minutos=3, galho=2, targetVela=2
+):
     tries = 0
     hit = 0
-    galhos = []
-    vela_entrada = None
 
-    for vela in velas:
-        if not found_vela and vela["vela"] >= minVela and vela["vela"] < maxVela:
-            found_vela = vela
+    for i in range(len(velas) - 1):
+        vela = velas[i]
+        if vela["vela"] < minVela or vela["vela"] >= maxVela:
             continue
 
-        if found_vela:
-            vela_entrada = found_vela
-            velaCreated1 = datetime.fromtimestamp(vela["created"])
-            velaCreated2 = datetime.fromtimestamp(found_vela["created"])
+        auxIndex = i + 1
+        while True:
+            velaAux = velas[auxIndex]
+            d1 = datetime.fromtimestamp(vela["created"])
+            d2 = datetime.fromtimestamp(velaAux["created"])
 
-            minutes_diff = (velaCreated1 - velaCreated2).total_seconds() / 60
+            minutes_diff = (d2 - d1).total_seconds() / 60
             if minutes_diff >= minutos:
-                if len(galhos) < 2:
-                    galhos.append(vela["vela"])
-                    continue
+                break
+            else:
+                auxIndex += 1
 
-                tries += 1
-                if any(v > 2 for v in galhos):
-                    hit += 1
-                found_vela = None
-                galhos = []
+        entrada = velas[auxIndex]
+        galhos = [entrada] + (
+            [] if galho == 0 else velas[auxIndex + 1 : auxIndex + galho + 1]
+        )
 
+        if any(g["vela"] >= targetVela for g in galhos):
+            hit += 1
+        tries += 1
     return {
         "assertividade": "0%" if hit == tries == 0 else "{:.0%}".format(hit / tries),
-        "vela_selecionada": vela_entrada["vela"] if vela_entrada else "Nenhuma",
+        # "vela_selecionada": vela_entrada["vela"] if vela_entrada else "Nenhuma",
     }
 
 
-def probabilidade_padrao_minutos_fixo(velas=[], galho=2):
+def probabilidade_padrao_intervalos_para_velaX(
+    velas=[], minVela=2, maxVela=3, minutos=3, galho=2, targetVela=2
+):
+    tries = 0
+    hit = 0
+
+    for i in range(len(velas) - 1):
+        vela = velas[i]
+        if vela["vela"] < minVela or vela["vela"] >= maxVela:
+            continue
+
+        auxIndex = i + 1
+        while auxIndex < len(velas):
+            velaAux = velas[auxIndex]
+            d1 = datetime.fromtimestamp(vela["created"])
+            d2 = datetime.fromtimestamp(velaAux["created"])
+
+            minutes_diff = (d2 - d1).total_seconds() / 60
+            if minutes_diff >= minutos:
+                break
+            else:
+                auxIndex += 1
+
+        entradas = (
+            [velas[auxIndex]] if galho == 0 else velas[auxIndex : auxIndex + galho + 1]
+        )
+
+        if any(entrada["vela"] >= targetVela for entrada in entradas):
+            hit += 1
+        tries += 1
+    return {
+        "assertividade": "0%" if hit == tries == 0 else "{:.0%}".format(hit / tries),
+        # "vela_selecionada": vela_entrada["vela"] if vela_entrada else "Nenhuma",
+    }
+
+
+def probabilidade_padrao_minutos_fixo(velas=[], galho=2, targetVela=2):
     result = {
         0: {
             "hit": 0,
@@ -297,22 +346,27 @@ def probabilidade_padrao_minutos_fixo(velas=[], galho=2):
         9: {
             "hit": 0,
             "tried": 0,
-        }
+        },
     }
 
-    for i in range(len(velas)-1):
+    for i in range(len(velas) - 1):
         vela = velas[i]
         dt_object = datetime.fromtimestamp(vela["created"])
         minute = dt_object.minute % 10
-        galhos = velas[i : i+galho + 1]
-        if any(g["vela"] >= 2 for g in galhos):
+        entradas = velas[i : i + galho + 1]
+        if any(entrada["vela"] >= targetVela for entrada in entradas):
             result[minute]["hit"] += 1
         result[minute]["tried"] += 1
     for key in result:
         hitTried = result[key]
-        result[key] =  ("0%" if hitTried['tried'] == 0 else "{:.0%}".format(hitTried['hit']/hitTried['tried']))
+        result[key] = (
+            "0%"
+            if hitTried["tried"] == 0
+            else "{:.0%}".format(hitTried["hit"] / hitTried["tried"])
+        )
 
     return result
+
 
 def fetch_contagem_cores(velas=[]):
     contagem = dict()
