@@ -62,8 +62,8 @@ def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade = 90):
         "padroes": {
             "xadrez": probabilidade_padrao_xadrez(velas, qtd_galho, targetVela, minProbabilidade),
             "surf": {
-                "verde": probabilidade_padrao_surf(velas, qtd_galho, targetVela, minProbabilidade),
-                "preto": probabilidade_padrao_surf(velas, qtd_galho, targetVela, minProbabilidade),
+                "verde": probabilidade_padrao_surf(velas, True, qtd_galho, targetVela, minProbabilidade),
+                "preto": probabilidade_padrao_surf(velas, False, qtd_galho, targetVela, minProbabilidade),
             },
         },
     }
@@ -145,13 +145,14 @@ def probabilidade_aposXx(velas = [], afterQtdVelas = 2, targetVela = 2, galho = 
     }
 
 
-def probabilidade_padrao_surf(velas = [], galho = 2, targetVela = 2, minProbabilidade = 50):
+def probabilidade_padrao_surf(velas, is_green, galho, targetVela, minProbabilidade):
     result = {}
     for qtdPadrao in [2, 3, 4]:
         hit = total = 0
         for i in range(len(velas)-galho):
             selectedVelas = velas[i : i + qtdPadrao*2]
-            if not all(vela["vela"] >= 2 for vela in selectedVelas):
+            isSurf = _is_surf(selectedVelas, is_green)
+            if not isSurf:
                 continue
             entradas = velas[i + qtdPadrao*2 : i + qtdPadrao*2 + galho + 1]
             if any(entrada["vela"] >= targetVela for entrada in entradas):
@@ -169,7 +170,7 @@ def probabilidade_padrao_surf(velas = [], galho = 2, targetVela = 2, minProbabil
     return result
 
 
-def probabilidade_padrao_xadrez(velas = [], galho = 2, targetVela = 2, minProbabilidade = 90):
+def probabilidade_padrao_xadrez(velas, galho, targetVela, minProbabilidade):
     result = {}
     for qtdXadrez in [2, 3, 4]:
         hit = total = 0
@@ -194,6 +195,12 @@ def probabilidade_padrao_xadrez(velas = [], galho = 2, targetVela = 2, minProbab
 
     return result
 
+def _is_surf(velas, isGreen = True):
+    print('creu ', velas)
+    if isGreen:
+        return all(vela["vela"] >= 2 for vela in velas)
+    else:
+        return all(vela["vela"] < 2 for vela in velas)
 
 def _isGreen(velaObj):
     return velaObj["vela"] >= 2
