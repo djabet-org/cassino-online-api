@@ -158,7 +158,7 @@ def probabilidade_padrao_surf(velas = [], galho = 2, targetVela = 2, minProbabil
                 hit += 1
             total += 1
 
-        probabilidade = 0 if not total else (hit / total)*100
+        probabilidade = int(0 if not total else (hit / total)*100)
         if probabilidade >= minProbabilidade:
              result[qtdPadrao] = {
                 'hit': hit,
@@ -184,13 +184,12 @@ def probabilidade_padrao_xadrez(velas = [], galho = 2, targetVela = 2, minProbab
                 hit += 1
             total += 1
         
-        probabilidade = 0 if not total else (hit / total)*100
-        print(probabilidade)
+        probabilidade = int(0 if not total else (hit / total)*100)
         if probabilidade >= minProbabilidade:
              result[qtdXadrez] = {
                 'hit': hit,
                 'tries': total,
-                'probabilidade': 0 if not total else (hit / total)*100
+                'probabilidade': probabilidade
             }
 
     return result
@@ -298,7 +297,7 @@ def probabilidade_padrao_intervalos_para_velaX(
         if any(entrada["vela"] >= targetVela for entrada in entradas):
             hit += 1
         tries += 1
-        probabilidade = 0 if tries == 0 else (hit / tries)*100
+        probabilidade = int(0 if tries == 0 else (hit / tries)*100)
     return {
         'hit': hit,
         'tries': tries,
@@ -366,7 +365,7 @@ def _build_minutos_probabilidades(result, minProbabilidade):
     probabilidades = {}
     for key in keys:
         hitTried = result[key]
-        probabilidade = 0 if hitTried["tried"] == 0 else (hitTried["hit"] / hitTried["tried"])*100
+        probabilidade = int(0 if hitTried["tried"] == 0 else (hitTried["hit"] / hitTried["tried"])*100)
         if probabilidade >= minProbabilidade:
             probabilidades[key] = hitTried
             probabilidades[key]['probabilidade'] = probabilidade 
