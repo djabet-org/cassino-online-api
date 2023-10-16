@@ -41,14 +41,15 @@ def crashDashboard(platform):
     qtd_velas = args.get("qtdVelas", default=200, type=int)
     qtd_galho = args.get("qtdGalho", default=2, type=int)
     target_vela = args.get("targetVela", default=2, type=int)
+    min_probabilidade = args.get("minProbabilidade", default=90, type=int)
 
     # return in JSON format. (For API)
     descVelas = fetch_velas(platform, qtd_velas)
     ascVelas = list(reversed(descVelas))
 
     result = dict()
-    result["media_intervalos"] = media_velas(ascVelas)
-    result["estrategias"] = get_estrategias(ascVelas, qtd_galho, target_vela)
+    result["media_velas"] = media_velas(ascVelas)
+    result["estrategias"] = get_estrategias(ascVelas, qtd_galho, target_vela, min_probabilidade)
     result["contagem_cores"] = fetch_contagem_cores(ascVelas)
     result["velas"] = descVelas
     result['balance'] = calculate_balance(ascVelas)
