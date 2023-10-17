@@ -42,7 +42,8 @@ def crashDashboard(platform):
     qtd_galho = args.get("qtdGalho", default=2, type=int)
     target_vela = args.get("targetVela", default=2, type=int)
     min_probabilidade = args.get("minProbabilidade", default=50, type=int)
-    padroes = args.getlist("padroes")
+    padroes = args.getlist("padrao")
+    print('padroes ', padroes)
 
     # return in JSON format. (For API)
     descVelas = fetch_velas(platform, qtd_velas)

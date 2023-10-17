@@ -91,7 +91,6 @@ def _build_padroes(velas, galho, targetVela, minProbabilidade, padroes=[]):
     padroesFiltrados = {}
     for padrao in padroes:
         mappedPadrao = list(map(lambda p: int(p), padrao.split(',')))
-        print('mappedPadrao ', mappedPadrao)
         result = probabilidade_padrao(velas, galho, targetVela, mappedPadrao)
         if result['probabilidade'] >= minProbabilidade:
             padroesFiltrados[padrao] = result
@@ -179,10 +178,7 @@ def probabilidade_padrao(velas, galho, targetVela, padrao=[]):
         if not all( selectedVelas[i] >= padrao[i] or (padrao[i] < 2 and selectedVelas[i] <= padrao[i]) for i in range(padraoSize)):
             continue
 
-        print('padrao ', padrao)
-        print('selectedVelas ', selectedVelas)
         entradas = velas[i + padraoSize : i + padraoSize + galho + 1]
-        print('entradas ', entradas)
         if any(entrada["vela"] >= targetVela for entrada in entradas):
             hit += 1
         total += 1
