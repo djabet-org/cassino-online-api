@@ -6,7 +6,7 @@ from .cassino_database_manager import (
 )
 
 
-def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade=90):
+def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade=90, padroes=[]):
     result = {
         "minutagem": {
             "minutos_fixo": probabilidade_padrao_minutos_fixo(
@@ -59,19 +59,7 @@ def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade=90):
                 }
             },
         },
-        "padroes": {
-            "xadrez": probabilidade_padrao_xadrez(
-                velas, qtd_galho, targetVela, minProbabilidade
-            ),
-            "surf": {
-                "verde": probabilidade_padrao_surf(
-                    velas, qtd_galho, targetVela, minProbabilidade
-                ),
-                "preto": probabilidade_padrao_surf(
-                    velas, qtd_galho, targetVela, minProbabilidade
-                ),
-            },
-        },
+        "padroes": _build_padroes(velas, qtd_galho, targetVela, minProbabilidade, padroes)
     }
 
     for minuto in ["3", "4", "5"]:
@@ -99,6 +87,16 @@ def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade=90):
 
     return result
 
+def _build_padroes(velas, galho, targetVela, minProbabilidade, padroes=[]):
+    padroesFiltrados = {}
+    for padrao in padroes:
+        mappedPadrao = list(map(lambda p: int(p), padrao.split(',')))
+        print('mappedPadrao ', mappedPadrao)
+        result = probabilidade_padrao(velas, galho, targetVela, mappedPadrao)
+        if result['probabilidade'] >= minProbabilidade:
+            padroesFiltrados[padrao] = result
+    
+    return padroesFiltrados        
 
 def probabilidade_padrao_minutos_intervalos(
     velas=[], galho=2, targetVela=2, minProbabilidade=90
@@ -215,6 +213,12 @@ def probabilidade_padrao_xadrez(velas, galho, targetVela, minProbabilidade):
 
     return result
 
+def _mapPadroes(padroes = []):
+    mappedPadroes = []
+    for padrao in padroes:
+        splittedAsInt = list(map(lambda p: int(p), padrao.split(',')))
+        mappedPadroes += [splittedAsInt]
+    return mappedPadroes    
 
 def _is_surf(velas, isGreen=True):
     print("creu ", velas)
