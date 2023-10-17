@@ -326,8 +326,9 @@ def probabilidade_padrao_intervalos_para_velaX(
         if any(entrada["vela"] >= targetVela for entrada in entradas):
             hit += 1
         tries += 1
-        probabilidade = int(0 if tries == 0 else (hit / tries) * 100)
-    return {"hit": hit, "tries": tries, "probabilidade": probabilidade}
+    
+    probabilidade = int(0 if tries == 0 else (hit / tries) * 100)
+    return {"hit": hit, "tried": tries, "probabilidade": probabilidade}
 
 
 def probabilidade_padrao_minutos_fixo(
