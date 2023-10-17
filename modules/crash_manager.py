@@ -183,7 +183,7 @@ def probabilidade_padrao(velas, galho, targetVela, padrao=[]):
             hit += 1
         total += 1
     probabilidade = int(0 if not total else (hit / total) * 100)
-    return {"hit": hit, "tries": total, "probabilidade": probabilidade}
+    return {"hit": hit, "tried": total, "probabilidade": probabilidade}
 
 
 def probabilidade_padrao_surf(velas, galho, targetVela, minProbabilidade):
