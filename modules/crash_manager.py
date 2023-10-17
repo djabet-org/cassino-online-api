@@ -6,7 +6,7 @@ from .cassino_database_manager import (
 )
 
 
-def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade = 90):
+def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade=90):
     result = {
         "minutagem": {
             "minutos_fixo": probabilidade_padrao_minutos_fixo(
@@ -60,22 +60,49 @@ def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade = 90):
             },
         },
         "padroes": {
-            "xadrez": probabilidade_padrao_xadrez(velas, qtd_galho, targetVela, minProbabilidade),
+            "xadrez": probabilidade_padrao_xadrez(
+                velas, qtd_galho, targetVela, minProbabilidade
+            ),
             "surf": {
-                "verde": probabilidade_padrao_surf(velas, True, qtd_galho, targetVela, minProbabilidade),
-                "preto": probabilidade_padrao_surf(velas, False, qtd_galho, targetVela, minProbabilidade),
+                "verde": probabilidade_padrao_surf(
+                    velas, qtd_galho, targetVela, minProbabilidade
+                ),
+                "preto": probabilidade_padrao_surf(
+                    velas, qtd_galho, targetVela, minProbabilidade
+                ),
             },
         },
     }
 
-    for minuto in ['3', '4', '5']:
-        result['minutagem']['intervalos_para_vela']['vela']['3x']['minuto'].pop(minuto, None) if result['minutagem']['intervalos_para_vela']['vela']['3x']['minuto'][minuto]['probabilidade'] < minProbabilidade else 0
-        result['minutagem']['intervalos_para_vela']['vela']['5x']['minuto'].pop(minuto, None) if result['minutagem']['intervalos_para_vela']['vela']['5x']['minuto'][minuto]['probabilidade'] < minProbabilidade else 0
-        result['minutagem']['intervalos_para_vela']['vela']['10x']['minuto'].pop(minuto, None) if result['minutagem']['intervalos_para_vela']['vela']['10x']['minuto'][minuto]['probabilidade'] < minProbabilidade else 0
+    for minuto in ["3", "4", "5"]:
+        result["minutagem"]["intervalos_para_vela"]["vela"]["3x"]["minuto"].pop(
+            minuto, None
+        ) if result["minutagem"]["intervalos_para_vela"]["vela"]["3x"]["minuto"][
+            minuto
+        ][
+            "probabilidade"
+        ] < minProbabilidade else 0
+        result["minutagem"]["intervalos_para_vela"]["vela"]["5x"]["minuto"].pop(
+            minuto, None
+        ) if result["minutagem"]["intervalos_para_vela"]["vela"]["5x"]["minuto"][
+            minuto
+        ][
+            "probabilidade"
+        ] < minProbabilidade else 0
+        result["minutagem"]["intervalos_para_vela"]["vela"]["10x"]["minuto"].pop(
+            minuto, None
+        ) if result["minutagem"]["intervalos_para_vela"]["vela"]["10x"]["minuto"][
+            minuto
+        ][
+            "probabilidade"
+        ] < minProbabilidade else 0
 
     return result
 
-def probabilidade_padrao_minutos_intervalos(velas=[], galho=2, targetVela=2, minProbabilidade = 90):
+
+def probabilidade_padrao_minutos_intervalos(
+    velas=[], galho=2, targetVela=2, minProbabilidade=90
+):
     result = {
         3: {
             "hit": 0,
@@ -120,13 +147,14 @@ def probabilidade_padrao_minutos_intervalos(velas=[], galho=2, targetVela=2, min
 
     return _build_minutos_probabilidades(result, minProbabilidade)
 
+
 def calculate_balance(velas=[]):
     total_money = sum(vela["total_money_bets"] for vela in velas)
     total_money_won = sum(vela["total_money_bets_won"] for vela in velas)
     return round(total_money - total_money_won, 2)
 
 
-def probabilidade_aposXx(velas = [], afterQtdVelas = 2, targetVela = 2, galho = 2):
+def probabilidade_aposXx(velas=[], afterQtdVelas=2, targetVela=2, galho=2):
     tries = 0
     hit = 0
     for i in range(len(velas) - 1):
@@ -134,73 +162,67 @@ def probabilidade_aposXx(velas = [], afterQtdVelas = 2, targetVela = 2, galho = 
         if vela < 10:
             continue
 
-        entradas = velas[i+afterQtdVelas:i+afterQtdVelas+galho]
-        print('vela ', vela)
-        print('entradas ', entradas)
-        if any(entrada['vela'] >= targetVela for entrada in entradas):
+        entradas = velas[i + afterQtdVelas : i + afterQtdVelas + galho]
+        print("vela ", vela)
+        print("entradas ", entradas)
+        if any(entrada["vela"] >= targetVela for entrada in entradas):
             hit += 1
-        tries += 1    
+        tries += 1
     return {
         "assertividade": "0%" if not hit and not tries else "{:.0%}".format(hit / tries)
     }
 
 
-def probabilidade_padrao_surf(velas, is_green, galho, targetVela, minProbabilidade):
-    result = {}
-    for qtdPadrao in [2, 3, 4]:
-        hit = total = 0
-        for i in range(len(velas)-galho):
-            selectedVelas = velas[i : i + qtdPadrao*2]
-            isSurf = _is_surf(selectedVelas, is_green)
-            if not isSurf:
-                continue
-            entradas = velas[i + qtdPadrao*2 : i + qtdPadrao*2 + galho + 1]
-            if any(entrada["vela"] >= targetVela for entrada in entradas):
-                hit += 1
-            total += 1
+def probabilidade_padrao(velas, galho, targetVela, padrao=[]):
+    padraoSize = len(padrao)
+    hit = total = 0
+    for i in range(len(velas) - padraoSize):
+        selectedVelas = list(map(lambda vela: vela['vela'], velas[i : i + padraoSize]))
+        if not all( selectedVelas[i] >= padrao[i] or (padrao[i] < 2 and selectedVelas[i] <= padrao[i]) for i in range(padraoSize)):
+            continue
 
-        probabilidade = int(0 if not total else (hit / total)*100)
+        print('padrao ', padrao)
+        print('selectedVelas ', selectedVelas)
+        entradas = velas[i + padraoSize : i + padraoSize + galho + 1]
+        print('entradas ', entradas)
+        if any(entrada["vela"] >= targetVela for entrada in entradas):
+            hit += 1
+        total += 1
+    probabilidade = int(0 if not total else (hit / total) * 100)
+    return {"hit": hit, "tries": total, "probabilidade": probabilidade}
+
+
+def probabilidade_padrao_surf(velas, galho, targetVela, minProbabilidade):
+    result = {}
+    for qtdSurf in [2, 3, 4]:
+        padrao = [2,2]*qtdSurf
+        surfProbabilidade = probabilidade_padrao(velas, galho, targetVela, padrao)
+        probabilidade = surfProbabilidade['probabilidade']
         if probabilidade >= minProbabilidade:
-             result[qtdPadrao] = {
-                'hit': hit,
-                'tries': total,
-                'probabilidade': int(0 if not total else (hit / total)*100)
-            }    
-    
+            result[qtdSurf] = surfProbabilidade
+
     return result
 
 
 def probabilidade_padrao_xadrez(velas, galho, targetVela, minProbabilidade):
     result = {}
     for qtdXadrez in [2, 3, 4]:
-        hit = total = 0
-        for i in range(len(velas)):
-            indexEnd = i + qtdXadrez * 2
-            selectedVelas = velas[i:indexEnd]
-            mappedVelas = list(map(lambda vela: vela["vela"] >= 2, selectedVelas))
-            if mappedVelas != [True, False] * qtdXadrez:
-                continue
-            galhos = velas[indexEnd : indexEnd + galho + 1]
-            if any(vela["vela"] >= targetVela for vela in galhos):
-                hit += 1
-            total += 1
-        
-        probabilidade = int(0 if not total else (hit / total)*100)
+        padrao = [2,1]*qtdXadrez
+        xadrezProbabilidade = probabilidade_padrao(velas, galho, targetVela, padrao)
+        probabilidade = xadrezProbabilidade['probabilidade']
         if probabilidade >= minProbabilidade:
-             result[qtdXadrez] = {
-                'hit': hit,
-                'tries': total,
-                'probabilidade': probabilidade
-            }
+            result[qtdXadrez] = xadrezProbabilidade
 
     return result
 
-def _is_surf(velas, isGreen = True):
-    print('creu ', velas)
+
+def _is_surf(velas, isGreen=True):
+    print("creu ", velas)
     if isGreen:
         return all(vela["vela"] >= 2 for vela in velas)
     else:
         return all(vela["vela"] < 2 for vela in velas)
+
 
 def _isGreen(velaObj):
     return velaObj["vela"] >= 2
@@ -304,14 +326,13 @@ def probabilidade_padrao_intervalos_para_velaX(
         if any(entrada["vela"] >= targetVela for entrada in entradas):
             hit += 1
         tries += 1
-        probabilidade = int(0 if tries == 0 else (hit / tries)*100)
-    return {
-        'hit': hit,
-        'tries': tries,
-        'probabilidade': probabilidade
-    }
+        probabilidade = int(0 if tries == 0 else (hit / tries) * 100)
+    return {"hit": hit, "tries": tries, "probabilidade": probabilidade}
 
-def probabilidade_padrao_minutos_fixo(velas=[], galho=2, targetVela=2, minProbabilidade = 90):
+
+def probabilidade_padrao_minutos_fixo(
+    velas=[], galho=2, targetVela=2, minProbabilidade=90
+):
     result = {
         0: {
             "hit": 0,
@@ -352,7 +373,7 @@ def probabilidade_padrao_minutos_fixo(velas=[], galho=2, targetVela=2, minProbab
         9: {
             "hit": 0,
             "tried": 0,
-        }
+        },
     }
 
     for i in range(len(velas) - 1):
@@ -372,12 +393,15 @@ def _build_minutos_probabilidades(result, minProbabilidade):
     probabilidades = {}
     for key in keys:
         hitTried = result[key]
-        probabilidade = int(0 if hitTried["tried"] == 0 else (hitTried["hit"] / hitTried["tried"])*100)
+        probabilidade = int(
+            0 if hitTried["tried"] == 0 else (hitTried["hit"] / hitTried["tried"]) * 100
+        )
         if probabilidade >= minProbabilidade:
             probabilidades[key] = hitTried
-            probabilidades[key]['probabilidade'] = probabilidade 
+            probabilidades[key]["probabilidade"] = probabilidade
 
     return probabilidades
+
 
 def fetch_contagem_cores(velas=[]):
     contagem = dict()
