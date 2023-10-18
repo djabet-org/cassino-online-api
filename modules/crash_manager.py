@@ -173,15 +173,19 @@ def probabilidade_aposXx(velas=[], afterQtdVelas=2, targetVela=2, galho=2):
 def probabilidade_padrao(velas, galho, targetVela, padrao=[]):
     padraoSize = len(padrao)
     hit = total = 0
-    for i in range(len(velas) - padraoSize):
+    i = 0
+    while i < (len(velas) - padraoSize):
         selectedVelas = list(map(lambda vela: vela['vela'], velas[i : i + padraoSize]))
         if not all( selectedVelas[i] >= padrao[i] or (padrao[i] < 2 and selectedVelas[i] < 2) for i in range(padraoSize)):
+            i += 1
             continue
-
+        # print('padrao ', padrao)
+        # print('selectedVelas ', selectedVelas)
         entradas = velas[i + padraoSize : i + padraoSize + galho + 1]
         if any(entrada["vela"] >= targetVela for entrada in entradas):
             hit += 1
         total += 1
+        i += (padraoSize + galho)
     probabilidade = int(0 if not total else (hit / total) * 100)
     return {"hit": hit, "tried": total, "probabilidade": probabilidade}
 
