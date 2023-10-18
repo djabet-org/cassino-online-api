@@ -308,4 +308,5 @@ def probabilidade_padrao_surf(
         if any(roll["color"] == targetColor for roll in galhos):
             hit += 1
         total += 1
-    return "0%" if not total else "{:.0%}".format(hit / total)
+
+    return { 'hit': hit, 'tried': total, 'probabilidade': 0 if not total else int(hit / total) }    
