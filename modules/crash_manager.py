@@ -338,7 +338,7 @@ def probabilidade_padrao_intervalos_para_velaX(
 def probabilidade_padrao_minutos_fixo(
     velas=[], galho=2, targetVela=2, minProbabilidade=90
 ):
-    result = {
+    keys = {
         0: {
             "hit": 0,
             "tried": 0,
@@ -380,17 +380,33 @@ def probabilidade_padrao_minutos_fixo(
             "tried": 0,
         },
     }
+    for key in keys:
+        i=0
+        lastMinute = None
+        while i < (len(velas) - 1):
+            vela = velas[i]
+            dt_object = datetime.fromtimestamp(vela["created"])
+            minute = dt_object.minute % 10
 
-    for i in range(len(velas) - 1):
-        vela = velas[i]
-        dt_object = datetime.fromtimestamp(vela["created"])
-        minute = dt_object.minute % 10
-        entradas = velas[i : i + galho + 1]
-        if any(entrada["vela"] >= targetVela for entrada in entradas):
-            result[minute]["hit"] += 1
-        result[minute]["tried"] += 1
+            # print(f'minute != key {minute != key}! lastMinute == key {lastMinute == key}')
+            if minute != key:
+                lastMinute = None
+                i += 1
+                continue
+            
+            if lastMinute == minute:
+                i += 1
+                continue
 
-    return _build_minutos_probabilidades(result, minProbabilidade)
+            lastMinute = minute
+            # print(dt_object)
+            keys[key]["tried"] += 1
+            entradas = velas[i : i + galho + 1]
+            if any(entrada["vela"] >= targetVela for entrada in entradas):
+                keys[key]["hit"] += 1
+            i += (galho)
+
+    return _build_minutos_probabilidades(keys, minProbabilidade)
 
 
 def _build_minutos_probabilidades(result, minProbabilidade):
