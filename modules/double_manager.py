@@ -309,4 +309,4 @@ def probabilidade_padrao_surf(
             hit += 1
         total += 1
 
-    return { 'hit': hit, 'tried': total, 'probabilidade': 0 if not total else int(hit / total) }    
+    return { 'hit': hit, 'tried': total, 'probabilidade': 0 if not total else int(hit / total * 100) }    
