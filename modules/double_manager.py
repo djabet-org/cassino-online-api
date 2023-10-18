@@ -236,6 +236,8 @@ def calculate_roll_next_color_probability(rolls=[], galho=2):
 
     for i in range(len(rolls) - 1):
         roll = rolls[i]
+        if not roll["roll"] in result:
+            continue
         x = result[roll["roll"]]
         next_desired_rolls = rolls[i + 1 : i + galho + 2]
         anyRed = any(r["color"] == "red" for r in next_desired_rolls)
@@ -256,9 +258,21 @@ def calculate_roll_next_color_probability(rolls=[], galho=2):
     for key in result:
         value = result[key]
         result[key] = {
-            "red": 0 if value[3] == 0 else int((value[0] / value[3]) * 100),
-            "black": 0 if value[3] == 0 else int((value[1] / value[3]) * 100),
-            "white": 0 if value[3] == 0 else int((value[2] / value[3]) * 100),
+            "red": {
+                'probabilidade': 0 if value[3] == 0 else int((value[0] / value[3]) * 100),
+                'hit': value[0],
+                'tried': value[3],
+            },
+            "black": {
+                'probabilidade': 0 if value[3] == 0 else int((value[1] / value[3]) * 100),
+                'hit': value[1],
+                'tried': value[3],
+            },
+            "white": {
+                'probabilidade': 0 if value[3] == 0 else int((value[2] / value[3]) * 100),
+                'hit': value[2],
+                'tried': value[3],
+            }
         }
 
     return result
@@ -276,7 +290,6 @@ def fetch_rolls(platform, qtd_rolls):
                 "total_red_money": rowRolls["total_red_money"],
                 "total_black_money": rowRolls["total_black_money"],
                 "total_white_money": rowRolls["total_white_money"],
-                "color": rowRolls["color"],
             },
             rolls,
         )
