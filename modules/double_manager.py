@@ -299,14 +299,16 @@ def fetch_rolls(platform, qtd_rolls):
 def probabilidade_padrao_surf(
     rolls=[], surfColor="red", length=2, galho=2, targetColor="red"
 ):
-    hit = total = 0
-    for i in range(len(rolls) - 1):
+    hit = total = i = 0
+    while i < len(rolls) - 1:
         surf = rolls[i : i + length]
         if not all(roll["color"] == surfColor for roll in surf):
+            i += 1
             continue
         galhos = rolls[i + length : i + length + galho + 1]
         if any(roll["color"] == targetColor for roll in galhos):
             hit += 1
         total += 1
+        i += length+galho
 
     return { 'hit': hit, 'tried': total, 'probabilidade': 0 if not total else int(hit / total * 100) }    
