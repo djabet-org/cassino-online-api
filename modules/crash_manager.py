@@ -213,25 +213,6 @@ def probabilidade_padrao_xadrez(velas, galho, targetVela, minProbabilidade):
 
     return result
 
-def _mapPadroes(padroes = []):
-    mappedPadroes = []
-    for padrao in padroes:
-        splittedAsInt = list(map(lambda p: int(p), padrao.split(',')))
-        mappedPadroes += [splittedAsInt]
-    return mappedPadroes    
-
-def _is_surf(velas, isGreen=True):
-    print("creu ", velas)
-    if isGreen:
-        return all(vela["vela"] >= 2 for vela in velas)
-    else:
-        return all(vela["vela"] < 2 for vela in velas)
-
-
-def _isGreen(velaObj):
-    return velaObj["vela"] >= 2
-
-
 def media_vela_tempo(velas=[]):
     if not velas or len(velas) == 1:
         return "Nenhuma."
