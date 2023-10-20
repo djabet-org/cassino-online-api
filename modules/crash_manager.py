@@ -59,7 +59,11 @@ def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade=90, pa
                 }
             },
         },
-        "padroes": _build_padroes(velas, qtd_galho, targetVela, minProbabilidade, padroes)
+        "padroes": _build_padroes(velas, qtd_galho, targetVela, minProbabilidade, padroes),
+        "entrada_agora": {
+            'probabilidade': probabilidade_padrao(velas, qtd_galho, targetVela, _mapPadraoFromVelas(velas[-4:])),
+            'padrao': _mapPadraoFromVelas(velas[-4:])                                                  
+        }
     }
 
     for minuto in ["3", "4", "5"]:
@@ -86,6 +90,9 @@ def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade=90, pa
         ] < minProbabilidade else 0
 
     return result
+
+def _mapPadraoFromVelas(velas = []):
+    return list(map(lambda v: v['vela'], velas))
 
 def _build_padroes(velas, galho, targetVela, minProbabilidade, padroes=[]):
     padroesFiltrados = {}
@@ -176,7 +183,7 @@ def probabilidade_padrao(velas, galho, targetVela, padrao=[]):
     i = 0
     while i < (len(velas) - padraoSize):
         selectedVelas = list(map(lambda vela: vela['vela'], velas[i : i + padraoSize]))
-        if not all( padrao[i] == 2 and selectedVelas[i] >= padrao[i] or (padrao[i] < 2 and selectedVelas[i] < 2) for i in range(padraoSize)):
+        if not all( padrao[i] >= 2 and selectedVelas[i] >= 2 or (padrao[i] < 2 and selectedVelas[i] < 2) for i in range(padraoSize)):
             i += 1
             continue
         # print('padrao ', padrao)
@@ -188,30 +195,6 @@ def probabilidade_padrao(velas, galho, targetVela, padrao=[]):
         i += (padraoSize + galho)
     probabilidade = int(0 if not total else (hit / total) * 100)
     return {"hit": hit, "tried": total, "probabilidade": probabilidade}
-
-
-def probabilidade_padrao_surf(velas, galho, targetVela, minProbabilidade):
-    result = {}
-    for qtdSurf in [2, 3, 4]:
-        padrao = [2,2]*qtdSurf
-        surfProbabilidade = probabilidade_padrao(velas, galho, targetVela, padrao)
-        probabilidade = surfProbabilidade['probabilidade']
-        if probabilidade >= minProbabilidade:
-            result[qtdSurf] = surfProbabilidade
-
-    return result
-
-
-def probabilidade_padrao_xadrez(velas, galho, targetVela, minProbabilidade):
-    result = {}
-    for qtdXadrez in [2, 3, 4]:
-        padrao = [2,1]*qtdXadrez
-        xadrezProbabilidade = probabilidade_padrao(velas, galho, targetVela, padrao)
-        probabilidade = xadrezProbabilidade['probabilidade']
-        if probabilidade >= minProbabilidade:
-            result[qtdXadrez] = xadrezProbabilidade
-
-    return result
 
 def media_vela_tempo(velas=[]):
     if not velas or len(velas) == 1:
