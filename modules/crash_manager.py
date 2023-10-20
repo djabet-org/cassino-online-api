@@ -176,7 +176,7 @@ def probabilidade_padrao(velas, galho, targetVela, padrao=[]):
     i = 0
     while i < (len(velas) - padraoSize):
         selectedVelas = list(map(lambda vela: vela['vela'], velas[i : i + padraoSize]))
-        if not all( selectedVelas[i] >= padrao[i] or (padrao[i] < 2 and selectedVelas[i] < 2) for i in range(padraoSize)):
+        if not all( padrao[i] == 2 and selectedVelas[i] >= padrao[i] or (padrao[i] < 2 and selectedVelas[i] < 2) for i in range(padraoSize)):
             i += 1
             continue
         # print('padrao ', padrao)
