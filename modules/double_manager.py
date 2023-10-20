@@ -3,7 +3,7 @@ from datetime import datetime
 from .cassino_database_manager import fetch_double_rolls
 
 
-def get_estrategias_double(rolls=[], galho=2):
+def get_estrategias_double(rolls=[], galho=2, padroes = []):
     return {
         "numero_cor_probabilidades": calculate_roll_next_color_probability(
             rolls, galho
@@ -20,6 +20,7 @@ def get_estrategias_double(rolls=[], galho=2):
                 "red": probabilidade_padrao_minutos_fixo(rolls, galho, "red"),
             },
         },
+        "padroes": probabilidade_padroes_cores(rolls, padroes),        
         "surf": {
             "duplo": {
                 "red": probabilidade_padrao_surf(rolls, "red", 2, galho, "red"),
@@ -295,7 +296,54 @@ def fetch_rolls(platform, qtd_rolls):
         )
     )
 
+def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 2):
+    result = {}
+    for padrao in padroes:
+        result[padrao] = {
+            'red': probabilidade_padrao_cor(rolls, padrao, 'red', galho),
+            'black': probabilidade_padrao_cor(rolls, padrao, 'black', galho),
+        }
+    return result    
 
+def probabilidade_padrao_cor(rolls=[], pattern='', targetColor="red", galho=2):
+    pattern = _mapPattern(pattern)
+    patternLength = len(pattern)
+    hit = total = 0
+    i = 0
+    print('creu ', patternLength)
+    while i < len(rolls)-patternLength:
+        rollsToBeChecked = rolls[i:i+patternLength]
+        
+        if not __is_pattern_found(rollsToBeChecked, pattern):
+            i += 1
+            continue
+        entradas = rolls[i + patternLength : i + patternLength + galho + 1]
+        if any(entrada["color"] == targetColor for entrada in entradas):
+            hit += 1
+        total += 1
+        i += (patternLength + galho+1)
+    probabilidade = int(0 if not total else (hit / total) * 100)
+    return {"hit": hit, "tried": total, "probabilidade": probabilidade}
+
+def __is_pattern_found(rolls = [], pattern = [], ignoreNumber = True):
+    rolls_colors = list(map(lambda r: r['color'], rolls))
+    print(rolls_colors)
+    print('pattern ', pattern)
+    return rolls_colors == pattern
+
+def _mapPattern(pattern=''):
+    splittedPattern = pattern.split(',')
+    mappedPattern = []
+    for p in splittedPattern:
+        if p == 'r':
+            mappedPattern.append('red')
+        elif p == 'b':
+            mappedPattern.append('black')
+        else:
+            mappedPattern.append('white')
+    print('creu ', mappedPattern)
+    return mappedPattern 
+       
 def probabilidade_padrao_surf(
     rolls=[], surfColor="red", length=2, galho=2, targetColor="red"
 ):
