@@ -30,8 +30,8 @@ class TestManager(unittest.TestCase):
         ]
 
         self.assertEqual(probabilidade_padrao_cor(rolls, 'r,b,r', 'red', 2)['probabilidade'], 100)
-        # self.assertEqual(probabilidade_padrao_cor(rolls, 'r,r', 'red', 2)['probabilidade'], 100)
-        # self.assertEqual(probabilidade_padrao_cor(rolls, 'r,r,r', 'red', 2)['probabilidade'], 0)
+        self.assertEqual(probabilidade_padrao_cor(rolls, 'r,r', 'red', 2)['probabilidade'], 100)
+        self.assertEqual(probabilidade_padrao_cor(rolls, 'r,r,r', 'red', 2)['probabilidade'], 0)
 
 if __name__ == '__main__':
     unittest.main()

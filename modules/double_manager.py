@@ -3,7 +3,7 @@ from datetime import datetime
 from .cassino_database_manager import fetch_double_rolls
 
 
-def get_estrategias_double(rolls=[], galho=2, padroes = []):
+def get_estrategias_double(rolls=[], galho=2, padroes = [], minProbabilidade = 50):
     return {
         "numero_cor_probabilidades": calculate_roll_next_color_probability(
             rolls, galho
@@ -20,39 +20,7 @@ def get_estrategias_double(rolls=[], galho=2, padroes = []):
                 "red": probabilidade_padrao_minutos_fixo(rolls, galho, "red"),
             },
         },
-        "padroes": probabilidade_padroes_cores(rolls, padroes),        
-        "surf": {
-            "duplo": {
-                "red": probabilidade_padrao_surf(rolls, "red", 2, galho, "red"),
-                "black": probabilidade_padrao_surf(rolls, "black", 2, galho, "black"),
-                "red_targetBlack": probabilidade_padrao_surf(
-                    rolls, "red", 2, galho, "black"
-                ),
-                "black_targetRed": probabilidade_padrao_surf(
-                    rolls, "black", 2, galho, "red"
-                ),
-            },
-            "triplo": {
-                "red": probabilidade_padrao_surf(rolls, "red", 3, galho, "red"),
-                "black": probabilidade_padrao_surf(rolls, "black", 3, galho, "black"),
-                "red_targetBlack": probabilidade_padrao_surf(
-                    rolls, "red", 3, galho, "black"
-                ),
-                "black_targetRed": probabilidade_padrao_surf(
-                    rolls, "black", 3, galho, "red"
-                ),
-            },
-            "quadruplo": {
-                "red": probabilidade_padrao_surf(rolls, "red", 4, galho, "red"),
-                "black": probabilidade_padrao_surf(rolls, "black", 4, galho, "black"),
-                "red_targetBlack": probabilidade_padrao_surf(
-                    rolls, "red", 4, galho, "black"
-                ),
-                "black_targetRed": probabilidade_padrao_surf(
-                    rolls, "black", 4, galho, "red"
-                ),
-            },
-        },
+        "padroes": probabilidade_padroes_cores(rolls, padroes, galho, minProbabilidade),        
     }
 
 
@@ -296,12 +264,15 @@ def fetch_rolls(platform, qtd_rolls):
         )
     )
 
-def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 2):
+def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 2, minProbabilidade = 0):
     result = {}
     for padrao in padroes:
+        redProbabilidade = probabilidade_padrao_cor(rolls, padrao, 'red', galho)
+        blackProbabilidade = probabilidade_padrao_cor(rolls, padrao, 'black', galho)
+
         result[padrao] = {
-            'red': probabilidade_padrao_cor(rolls, padrao, 'red', galho),
-            'black': probabilidade_padrao_cor(rolls, padrao, 'black', galho),
+            'red': {} if redProbabilidade['probabilidade'] < minProbabilidade else redProbabilidade,
+            'black': {} if blackProbabilidade['probabilidade'] < minProbabilidade else blackProbabilidade
         }
     return result    
 
@@ -310,7 +281,6 @@ def probabilidade_padrao_cor(rolls=[], pattern='', targetColor="red", galho=2):
     patternLength = len(pattern)
     hit = total = 0
     i = 0
-    print('creu ', patternLength)
     while i < len(rolls)-patternLength:
         rollsToBeChecked = rolls[i:i+patternLength]
         
@@ -327,8 +297,6 @@ def probabilidade_padrao_cor(rolls=[], pattern='', targetColor="red", galho=2):
 
 def __is_pattern_found(rolls = [], pattern = [], ignoreNumber = True):
     rolls_colors = list(map(lambda r: r['color'], rolls))
-    print(rolls_colors)
-    print('pattern ', pattern)
     return rolls_colors == pattern
 
 def _mapPattern(pattern=''):
@@ -341,22 +309,4 @@ def _mapPattern(pattern=''):
             mappedPattern.append('black')
         else:
             mappedPattern.append('white')
-    print('creu ', mappedPattern)
     return mappedPattern 
-       
-def probabilidade_padrao_surf(
-    rolls=[], surfColor="red", length=2, galho=2, targetColor="red"
-):
-    hit = total = i = 0
-    while i < len(rolls) - 1:
-        surf = rolls[i : i + length]
-        if not all(roll["color"] == surfColor for roll in surf):
-            i += 1
-            continue
-        galhos = rolls[i + length : i + length + galho + 1]
-        if any(roll["color"] == targetColor for roll in galhos):
-            hit += 1
-        total += 1
-        i += length+galho
-
-    return { 'hit': hit, 'tried': total, 'probabilidade': 0 if not total else int(hit / total * 100) }    
