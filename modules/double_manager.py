@@ -2,8 +2,7 @@ from __future__ import division
 from datetime import datetime
 from .cassino_database_manager import fetch_double_rolls
 
-
-def get_estrategias_double(rolls=[], galho=2, padroes = [], minProbabilidade = 50, targetColor = '*'):
+def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0, targetColor = '*'):
     return {
         "numero_cor_probabilidades": calculate_roll_next_color_probability(
             rolls, galho
@@ -272,18 +271,27 @@ def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 2, minProbabil
         whiteProbabilidade = _probabilidade_padrao_cor(rolls, padrao, 'white', galho)
 
         result[padrao] = {
-                'red': {} if redProbabilidade['probabilidade'] < minProbabilidade else redProbabilidade,
-                'black': {} if blackProbabilidade['probabilidade'] < minProbabilidade else blackProbabilidade,
-                'white': {} if whiteProbabilidade['probabilidade'] < minProbabilidade else whiteProbabilidade
+            'red': redProbabilidade,
+            'black': blackProbabilidade,
+            'white': whiteProbabilidade
         }
 
-        for color in ['red', 'black', 'white']:
-            if targetColor == '*':
-                break
-            elif color != targetColor:
-                result[padrao].pop(color, None)
+        result[padrao] = _filterByTargetColor(_filterByMinProbabilidade(result[padrao], minProbabilidade), targetColor)
 
     return result    
+
+def _filterByTargetColor(padraoProbabilidades = {}, targetColor = '*'):
+    if targetColor == '*':
+        return padraoProbabilidades
+    else:
+        [padraoProbabilidades.pop(color) for color in list(padraoProbabilidades.keys()) if color != targetColor]
+
+    return padraoProbabilidades
+
+def _filterByMinProbabilidade(padraoProbabilidades = {}, minProbabilidade = 0):
+        print(padraoProbabilidades)
+        [padraoProbabilidades.pop(color) for color in list(padraoProbabilidades.keys()) if padraoProbabilidades[color]['probabilidade'] < minProbabilidade]
+        return padraoProbabilidades
 
 def _probabilidade_padrao_cor(rolls=[], pattern='', targetColor="red", galho=2):
     pattern = _mapPattern(pattern)
@@ -318,4 +326,4 @@ def _mapPattern(pattern=''):
             mappedPattern.append('black')
         else:
             mappedPattern.append('white')
-    return mappedPattern 
+    return mappedPattern
