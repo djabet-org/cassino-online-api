@@ -3,7 +3,7 @@ from datetime import datetime
 from .cassino_database_manager import fetch_double_rolls
 
 
-def get_estrategias_double(rolls=[], galho=2, padroes = [], minProbabilidade = 50):
+def get_estrategias_double(rolls=[], galho=2, padroes = [], minProbabilidade = 50, targetColor = '*'):
     return {
         "numero_cor_probabilidades": calculate_roll_next_color_probability(
             rolls, galho
@@ -20,7 +20,7 @@ def get_estrategias_double(rolls=[], galho=2, padroes = [], minProbabilidade = 5
                 "red": probabilidade_padrao_minutos_fixo(rolls, galho, "red"),
             },
         },
-        "padroes": probabilidade_padroes_cores(rolls, padroes, galho, minProbabilidade),        
+        "padroes": probabilidade_padroes_cores(rolls, padroes, galho, minProbabilidade, targetColor),        
     }
 
 
@@ -264,19 +264,28 @@ def fetch_rolls(platform, qtd_rolls):
         )
     )
 
-def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 2, minProbabilidade = 0):
+def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 2, minProbabilidade = 0, targetColor = '*'):
     result = {}
     for padrao in padroes:
-        redProbabilidade = probabilidade_padrao_cor(rolls, padrao, 'red', galho)
-        blackProbabilidade = probabilidade_padrao_cor(rolls, padrao, 'black', galho)
+        redProbabilidade = _probabilidade_padrao_cor(rolls, padrao, 'red', galho)
+        blackProbabilidade = _probabilidade_padrao_cor(rolls, padrao, 'black', galho)
+        whiteProbabilidade = _probabilidade_padrao_cor(rolls, padrao, 'white', galho)
 
         result[padrao] = {
-            'red': {} if redProbabilidade['probabilidade'] < minProbabilidade else redProbabilidade,
-            'black': {} if blackProbabilidade['probabilidade'] < minProbabilidade else blackProbabilidade
+                'red': {} if redProbabilidade['probabilidade'] < minProbabilidade else redProbabilidade,
+                'black': {} if blackProbabilidade['probabilidade'] < minProbabilidade else blackProbabilidade,
+                'white': {} if whiteProbabilidade['probabilidade'] < minProbabilidade else whiteProbabilidade
         }
+
+        for color in ['red', 'black', 'white']:
+            if targetColor == '*':
+                break
+            elif color != targetColor:
+                result[padrao].pop(color, None)
+
     return result    
 
-def probabilidade_padrao_cor(rolls=[], pattern='', targetColor="red", galho=2):
+def _probabilidade_padrao_cor(rolls=[], pattern='', targetColor="red", galho=2):
     pattern = _mapPattern(pattern)
     patternLength = len(pattern)
     hit = total = 0

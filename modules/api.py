@@ -66,6 +66,7 @@ def doubleDashboard(platform):
     qtdRolls = args.get("qtdRolls", default=200, type=int)
     galho = args.get("galho", default=2, type=int)
     minProbabilidade = args.get("minProbabilidade", default=0, type=int)
+    targetColor = args.get("targetColor", default='*', type=str)
     padroes = args.getlist("padrao")
 
     # return in JSON format. (For API)
@@ -74,7 +75,7 @@ def doubleDashboard(platform):
 
     result = dict()
     result["contagem_cores"] = calculate_rolls_distribution(descRolls)
-    result["estrategias"] = get_estrategias_double(ascRolls, galho, padroes, minProbabilidade)
+    result["estrategias"] = get_estrategias_double(ascRolls, galho, padroes, minProbabilidade, targetColor)
     result["rolls"] = descRolls
     result["balance"] = calculate_balance_rolls(ascRolls)
     
