@@ -5,7 +5,7 @@ from .cassino_database_manager import fetch_double_rolls
 def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0, targetColor = '*'):
     return {
         "numero_cor_probabilidades": calculate_roll_next_color_probability(
-            rolls, galho
+            rolls, galho, targetColor
         ),
         "minutagem": {
             "intervalos": {
@@ -66,7 +66,7 @@ def calculate_balance_rolls(rolls=[]):
     return balance
 
 
-def probabilidade_padrao_minutos_intervalos(rolls=[], galho=2, desiredColor=""):
+def probabilidade_padrao_minutos_intervalos(rolls=[], galho=0, desiredColor=""):
     result = {
         3: {
             "hit": 0,
@@ -120,7 +120,7 @@ def probabilidade_padrao_minutos_intervalos(rolls=[], galho=2, desiredColor=""):
     return result
 
 
-def probabilidade_padrao_minutos_fixo(rolls=[], galho=2, desiredColor=""):
+def probabilidade_padrao_minutos_fixo(rolls=[], galho=0, desiredColor=""):
     result = {
         0: {
             "hit": 0,
@@ -181,7 +181,7 @@ def probabilidade_padrao_minutos_fixo(rolls=[], galho=2, desiredColor=""):
     return result
 
 
-def calculate_roll_next_color_probability(rolls=[], galho=2):
+def calculate_roll_next_color_probability(rolls=[], galho=0, targetColor='red'):
     result = dict(
         {
             0: [0, 0, 0, 0],
@@ -243,6 +243,8 @@ def calculate_roll_next_color_probability(rolls=[], galho=2):
             }
         }
 
+        [result[key].pop(color) for color in ['red', 'black', 'white'] if targetColor != color] 
+
     return result
 
 
@@ -293,7 +295,7 @@ def _filterByMinProbabilidade(padraoProbabilidades = {}, minProbabilidade = 0):
         [padraoProbabilidades.pop(color) for color in list(padraoProbabilidades.keys()) if padraoProbabilidades[color]['probabilidade'] < minProbabilidade]
         return padraoProbabilidades
 
-def _probabilidade_padrao_cor(rolls=[], pattern='', targetColor="red", galho=2):
+def _probabilidade_padrao_cor(rolls=[], pattern='', targetColor="red", galho=0):
     pattern = _mapPattern(pattern)
     patternLength = len(pattern)
     hit = total = 0

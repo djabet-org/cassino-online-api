@@ -28,16 +28,46 @@ class TestManager(unittest.TestCase):
             { 'roll': 5, 'color': 'white' },
         ]
 
-        result = calculate_roll_next_color_probability(rolls, 2)
+        result = calculate_roll_next_color_probability(rolls)
         self.assertEqual(result[0]["red"]['hit'], 1)
         self.assertEqual(result[0]["red"]['tried'], 3)
         self.assertEqual(result[0]["red"]['probabilidade'], 33)
-        self.assertEqual(result[0]["black"]['hit'], 2)
-        self.assertEqual(result[0]["black"]['tried'], 3)
-        self.assertEqual(result[0]["black"]['probabilidade'], 66)
-        self.assertEqual(result[0]["white"]['hit'], 2)
-        self.assertEqual(result[0]["white"]['tried'], 3)
-        self.assertEqual(result[0]["white"]['probabilidade'], 66)
+
+    def test_numero_cor_probabilidade_targetColor(self):
+        rolls = [
+            { 'roll': 0, 'color': 'red' },
+            { 'roll': 3, 'color': 'red' },
+            { 'roll': 4, 'color': 'black' },
+            { 'roll': 5, 'color': 'black' },
+            { 'roll': 1, 'color': 'black' },
+            { 'roll': 0, 'color': 'black' },
+            { 'roll': 3, 'color': 'black' },
+            { 'roll': 10, 'color': 'black' },
+            { 'roll': 5, 'color': 'white' },
+        ]
+
+        result = calculate_roll_next_color_probability(rolls, targetColor='red')
+        self.assertEqual(result[0]["red"]['hit'], 1)
+        self.assertEqual(result[0]["red"]['tried'], 2)
+        self.assertEqual(result[0]["red"]['probabilidade'], 50)    
+        self.assertFalse('black' in result[0])    
+
+    def test_numero_cor_probabilidade_galho(self):
+        rolls = [
+            { 'roll': 0, 'color': 'red' },
+            { 'roll': 3, 'color': 'black' },
+            { 'roll': 4, 'color': 'black' },
+            { 'roll': 5, 'color': 'red' },
+            { 'roll': 0, 'color': 'red' },
+            { 'roll': 8, 'color': 'black' },
+            { 'roll': 9, 'color': 'black' },
+            { 'roll': 1, 'color': 'black' },
+        ]
+
+        result = calculate_roll_next_color_probability(rolls, galho=2, targetColor='red')
+        self.assertEqual(result[0]["red"]['hit'], 1)
+        self.assertEqual(result[0]["red"]['tried'], 2)
+        self.assertEqual(result[0]["red"]['probabilidade'], 50)
 
 if __name__ == '__main__':
     unittest.main()
