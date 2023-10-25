@@ -52,6 +52,24 @@ class TestManager(unittest.TestCase):
         self.assertEqual(result[0]["red"]['probabilidade'], 50)    
         self.assertFalse('black' in result[0])    
 
+    def test_numero_cor_probabilidade_targetColor_allColors(self):
+        rolls = [
+            { 'roll': 0, 'color': 'red' },
+            { 'roll': 3, 'color': 'red' },
+            { 'roll': 4, 'color': 'black' },
+            { 'roll': 5, 'color': 'black' },
+            { 'roll': 1, 'color': 'black' },
+            { 'roll': 0, 'color': 'black' },
+            { 'roll': 3, 'color': 'black' },
+            { 'roll': 10, 'color': 'black' },
+            { 'roll': 5, 'color': 'white' },
+        ]
+
+        result = calculate_roll_next_color_probability(rolls, targetColor='*')
+        self.assertTrue('black' in result[0])        
+        self.assertTrue('red' in result[0])        
+        self.assertTrue('white' in result[0])        
+
     def test_numero_cor_probabilidade_galho(self):
         rolls = [
             { 'roll': 0, 'color': 'red' },

@@ -243,7 +243,8 @@ def calculate_roll_next_color_probability(rolls=[], galho=0, targetColor='red'):
             }
         }
 
-        [result[key].pop(color) for color in ['red', 'black', 'white'] if targetColor != color] 
+        if targetColor != '*':
+            [result[key].pop(color) for color in ['red', 'black', 'white'] if targetColor != color] 
 
     return result
 
