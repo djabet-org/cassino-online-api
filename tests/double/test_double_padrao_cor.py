@@ -11,8 +11,7 @@ from modules.double_manager import probabilidade_padroes_cores
 from datetime import datetime, timedelta
 
 class TestManager(unittest.TestCase):
-    def test_padrao_cores(self):
-        rolls = [
+    rolls = [
             { 'roll': 1, 'color': 'red' },
             { 'roll': 2, 'color': 'red' },
             { 'roll': 3, 'color': 'black' },
@@ -28,6 +27,8 @@ class TestManager(unittest.TestCase):
             { 'roll': 8, 'color': 'black' },
             { 'roll': 8, 'color': 'black' },
             { 'roll': 8, 'color': 'black' },
+            { 'roll': 8, 'color': 'red' },
+            { 'roll': 8, 'color': 'red' },
             { 'roll': 8, 'color': 'black' },
             { 'roll': 8, 'color': 'black' },
             { 'roll': 8, 'color': 'black' },
@@ -36,22 +37,31 @@ class TestManager(unittest.TestCase):
             { 'roll': 10, 'color': 'black' },
             { 'roll': 11, 'color': 'red' },
             { 'roll': 12, 'color': 'red' },
-            
         ]
 
-        resultRed = probabilidade_padroes_cores(rolls, ['b,b,b,b'], 2, 50, 'red')['b,b,b,b']
-        resultBlack = probabilidade_padroes_cores(rolls, ['b,b,b,b'], 2, 50, 'black')['b,b,b,b']
-        resultAll = probabilidade_padroes_cores(rolls, ['b,b,b,b'], 2, 50)['b,b,b,b']
+    def test_padrao_cores(self):
+        resultAll = probabilidade_padroes_cores(self.rolls, ['b,b,b,b'])['b,b,b,b']
+        self.assertEqual(resultAll['black']['probabilidade'], 33)
+        self.assertEqual(resultAll['red']['probabilidade'], 66)
+        self.assertEqual(resultAll['white']['probabilidade'], 0)
 
-        self.assertEqual(resultRed['red']['probabilidade'], 50)
-        self.assertTrue('black' not in resultRed)
-        self.assertTrue('white' not in resultRed)
-        self.assertEqual(resultBlack['black']['probabilidade'], 100)
-        self.assertTrue('red' not in resultBlack)
-        self.assertTrue('white' not in resultBlack)
+    def test_padrao_cores_galho(self):
+        resultAll = probabilidade_padroes_cores(self.rolls, ['b,b,b,b'], 2)['b,b,b,b']
         self.assertEqual(resultAll['black']['probabilidade'], 100)
-        self.assertEqual(resultAll['red']['probabilidade'], 50)
-        self.assertEqual(resultAll['white'], {})
+        self.assertEqual(resultAll['red']['probabilidade'], 100)
+        self.assertEqual(resultAll['white']['probabilidade'], 0)
+
+    def test_padrao_cores_targetColor(self):
+        resultRed = probabilidade_padroes_cores(self.rolls, ['b,b,b,b'], targetColor='red')['b,b,b,b']
+        self.assertEqual(resultRed['red']['probabilidade'], 66)
+        self.assertTrue('black' not in resultRed)
+        self.assertTrue('white' not in resultRed) 
+
+    def test_padrao_cores_minProbabilidade(self):
+        resultAll = probabilidade_padroes_cores(self.rolls, ['b,b,b,b'], minProbabilidade=60)['b,b,b,b']
+        self.assertEqual(resultAll['red']['probabilidade'], 66)
+        self.assertTrue('black' not in resultAll)
+        self.assertTrue('white' not in resultAll)
 
 if __name__ == '__main__':
     unittest.main()

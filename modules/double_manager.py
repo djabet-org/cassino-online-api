@@ -5,7 +5,7 @@ from .cassino_database_manager import fetch_double_rolls
 def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0, targetColor = '*'):
     return {
         "numero_cor_probabilidades": calculate_roll_next_color_probability(
-            rolls, galho, targetColor
+            rolls, galho, targetColor, minProbabilidade
         ),
         "minutagem": {
             "intervalos": {
@@ -181,7 +181,46 @@ def probabilidade_padrao_minutos_fixo(rolls=[], galho=0, desiredColor=""):
     return result
 
 
-def calculate_roll_next_color_probability(rolls=[], galho=0, targetColor='red'):
+def calculate_roll_next_color_probability(rolls=[], galho=0, targetColor='*', minProbabilidade=0):
+    result = _buildProbabilidadesMatrix(rolls, galho)
+    result = _mapProbabilities(result)
+    result = _filterByTargetColor(result, targetColor)
+    result = _filterByMinProbabilidade(result, minProbabilidade)
+    
+    return result
+
+def fetch_rolls(platform, qtd_rolls):
+    rolls = fetch_double_rolls(platform, qtd_rolls)
+    return list(
+        map(
+            lambda rowRolls: {
+                "roll": rowRolls["roll"],
+                "platform": rowRolls["platform"],
+                "created": rowRolls["created"],
+                "color": rowRolls["color"],
+                "total_red_money": rowRolls["total_red_money"],
+                "total_black_money": rowRolls["total_black_money"],
+                "total_white_money": rowRolls["total_white_money"],
+            },
+            rolls,
+        )
+    )
+
+def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 0, minProbabilidade = 0, targetColor = '*'):
+    result = {}
+    for padrao in padroes:
+            result[padrao] = {
+                'red': _probabilidade_padrao_cor(rolls, padrao, 'red', galho),
+                'black': _probabilidade_padrao_cor(rolls, padrao, 'black', galho),
+                'white':_probabilidade_padrao_cor(rolls, padrao, 'white', galho)
+            }
+
+    result = _filterByTargetColor(result, targetColor)
+    result = _filterByMinProbabilidade(result, minProbabilidade)
+
+    return result    
+
+def _buildProbabilidadesMatrix(rolls = [], galho = 0):
     result = dict(
         {
             0: [0, 0, 0, 0],
@@ -222,10 +261,23 @@ def calculate_roll_next_color_probability(rolls=[], galho=0, targetColor='red'):
         x[3] += 1
 
         result[roll["roll"]] = x
+    
+    return result    
 
+def _filterByTargetColor( result = {}, targetColor = ''):
+    if targetColor != '*':
+        filteredResult = {}
+        for key in result:
+                filteredResult[key] = {targetColor: result[key][targetColor]}
+        return filteredResult
+    return result 
+
+
+def _mapProbabilities( result = {}):
+    newResult = {}
     for key in result:
         value = result[key]
-        result[key] = {
+        newResult[key] = {
             "red": {
                 'probabilidade': 0 if value[3] == 0 else int((value[0] / value[3]) * 100),
                 'hit': value[0],
@@ -242,61 +294,19 @@ def calculate_roll_next_color_probability(rolls=[], galho=0, targetColor='red'):
                 'tried': value[3],
             }
         }
+    return newResult    
 
-        if targetColor != '*':
-            [result[key].pop(color) for color in ['red', 'black', 'white'] if targetColor != color] 
+def _filterByMinProbabilidade(probabilidades = {}, minProbabilidade = 0):
+    filteredResult = {}
+    for padrao in probabilidades:
+            padraoProbabilidades = {color: probabilidades[padrao][color] for color in probabilidades[padrao] 
+                                    if probabilidades[padrao][color]['probabilidade'] >= minProbabilidade }
+            if not padraoProbabilidades:
+                continue
+            filteredResult[padrao] = padraoProbabilidades
+    return filteredResult
 
-    return result
-
-
-def fetch_rolls(platform, qtd_rolls):
-    rolls = fetch_double_rolls(platform, qtd_rolls)
-    return list(
-        map(
-            lambda rowRolls: {
-                "roll": rowRolls["roll"],
-                "platform": rowRolls["platform"],
-                "created": rowRolls["created"],
-                "color": rowRolls["color"],
-                "total_red_money": rowRolls["total_red_money"],
-                "total_black_money": rowRolls["total_black_money"],
-                "total_white_money": rowRolls["total_white_money"],
-            },
-            rolls,
-        )
-    )
-
-def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 2, minProbabilidade = 0, targetColor = '*'):
-    result = {}
-    for padrao in padroes:
-        redProbabilidade = _probabilidade_padrao_cor(rolls, padrao, 'red', galho)
-        blackProbabilidade = _probabilidade_padrao_cor(rolls, padrao, 'black', galho)
-        whiteProbabilidade = _probabilidade_padrao_cor(rolls, padrao, 'white', galho)
-
-        result[padrao] = {
-            'red': redProbabilidade,
-            'black': blackProbabilidade,
-            'white': whiteProbabilidade
-        }
-
-        result[padrao] = _filterByTargetColor(_filterByMinProbabilidade(result[padrao], minProbabilidade), targetColor)
-
-    return result    
-
-def _filterByTargetColor(padraoProbabilidades = {}, targetColor = '*'):
-    if targetColor == '*':
-        return padraoProbabilidades
-    else:
-        [padraoProbabilidades.pop(color) for color in list(padraoProbabilidades.keys()) if color != targetColor]
-
-    return padraoProbabilidades
-
-def _filterByMinProbabilidade(padraoProbabilidades = {}, minProbabilidade = 0):
-        print(padraoProbabilidades)
-        [padraoProbabilidades.pop(color) for color in list(padraoProbabilidades.keys()) if padraoProbabilidades[color]['probabilidade'] < minProbabilidade]
-        return padraoProbabilidades
-
-def _probabilidade_padrao_cor(rolls=[], pattern='', targetColor="red", galho=0):
+def _probabilidade_padrao_cor(rolls=[], pattern='', targetColor="", galho=0):
     pattern = _mapPattern(pattern)
     patternLength = len(pattern)
     hit = total = 0
