@@ -91,19 +91,6 @@ def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade=90, pa
 
     return result
 
-def _mapPadraoFromVelas(velas = []):
-    return list(map(lambda v: v['vela'], velas))
-
-def _build_padroes(velas, galho, targetVela, minProbabilidade, padroes=[]):
-    padroesFiltrados = {}
-    for padrao in padroes:
-        mappedPadrao = list(map(lambda p: int(p), padrao.split(',')))
-        result = probabilidade_padrao(velas, galho, targetVela, mappedPadrao)
-        if result['probabilidade'] >= minProbabilidade:
-            padroesFiltrados[padrao] = result
-    
-    return padroesFiltrados        
-
 def probabilidade_padrao_minutos_intervalos(
     velas=[], galho=2, targetVela=2, minProbabilidade=90
 ):
@@ -196,7 +183,7 @@ def probabilidade_padrao(velas, galho, targetVela, padrao=[]):
     probabilidade = int(0 if not total else (hit / total) * 100)
     return {"hit": hit, "tried": total, "probabilidade": probabilidade}
 
-def media_vela_tempo(velas=[]):
+def _media_vela_tempo(velas=[]):
     if not velas or len(velas) == 1:
         return "Nenhuma."
 
@@ -219,10 +206,27 @@ def media_velas(velas=[]):
     velas10x = _fetch_crash_points_at_least(velas, 10, 100)
     velas100x = _fetch_crash_points_at_least(velas, 100, 1000)
 
-    intervalos["3x"] = media_vela_tempo(velas3x)
-    intervalos["5x"] = media_vela_tempo(velas5x)
-    intervalos["10x"] = media_vela_tempo(velas10x)
-    intervalos["100x"] = media_vela_tempo(velas100x)
+    intervalos["3x"] = {
+        'qtd': len(velas3x),
+        'media': int(len(velas3x)/len(velas)*100),
+        'media_tempo': _media_vela_tempo(velas3x)
+    }
+    
+    intervalos["5x"] = {
+        'qtd': len(velas5x),
+        'media': int(len(velas5x)/len(velas)*100),
+        'media_tempo': _media_vela_tempo(velas5x)
+    }
+    intervalos["10x"] = {
+        'qtd': len(velas10x),
+        'media': int(len(velas10x)/len(velas)*100),
+        'media_tempo': _media_vela_tempo(velas10x)
+    }
+    intervalos["100x"] = {
+        'qtd': len(velas100x),
+        'media': int(len(velas100x)/len(velas)*100),
+        'media_tempo': _media_vela_tempo(velas100x)
+    }
 
     return intervalos
 
@@ -372,6 +376,18 @@ def probabilidade_padrao_minutos_fixo(
 
     return _build_minutos_probabilidades(keys, minProbabilidade)
 
+def _mapPadraoFromVelas(velas = []):
+    return list(map(lambda v: v['vela'], velas))
+
+def _build_padroes(velas, galho, targetVela, minProbabilidade, padroes=[]):
+    padroesFiltrados = {}
+    for padrao in padroes:
+        mappedPadrao = list(map(lambda p: int(p), padrao.split(',')))
+        result = probabilidade_padrao(velas, galho, targetVela, mappedPadrao)
+        if result['probabilidade'] >= minProbabilidade:
+            padroesFiltrados[padrao] = result
+    
+    return padroesFiltrados   
 
 def _build_minutos_probabilidades(result, minProbabilidade):
     keys = list(result.keys())
