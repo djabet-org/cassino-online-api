@@ -201,11 +201,18 @@ def _media_vela_tempo(velas=[]):
 
 def media_velas(velas=[]):
     intervalos = dict()
+    velas2x = _fetch_crash_points_at_least(velas, 2, 3)
     velas3x = _fetch_crash_points_at_least(velas, 3, 5)
     velas5x = _fetch_crash_points_at_least(velas, 5, 10)
     velas10x = _fetch_crash_points_at_least(velas, 10, 100)
     velas100x = _fetch_crash_points_at_least(velas, 100, 1000)
 
+    intervalos["2x"] = {
+        'qtd': len(velas2x),
+        'media': int(len(velas2x)/len(velas)*100),
+        'media_tempo': _media_vela_tempo(velas2x)
+    }
+    
     intervalos["3x"] = {
         'qtd': len(velas3x),
         'media': int(len(velas3x)/len(velas)*100),
