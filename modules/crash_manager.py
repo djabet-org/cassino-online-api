@@ -6,7 +6,7 @@ from .cassino_database_manager import (
 )
 
 
-def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade=90, padroes=[]):
+def get_estrategias(velas=[], qtd_galho=0, targetVela=2, minProbabilidade=90, padroes=[]):
     result = {
         "minutagem": {
             "minutos_fixo": probabilidade_padrao_minutos_fixo(
@@ -91,8 +91,27 @@ def get_estrategias(velas=[], qtd_galho=2, targetVela=2, minProbabilidade=90, pa
 
     return result
 
+def catalogar_ciclos(velas = []):
+    ciclos_count= {
+        'continuo': 0,
+        'alternado': 0
+    }
+    ciclos = []
+    for i in range(0,len(velas)-3,3):
+        ciclo = list(map(lambda v: v['vela'], velas[i:i+3]))
+        ciclos.append(ciclo)
+
+    print(ciclos)
+    for ciclo in ciclos[-10:]:
+        if all(x < 2 for x in ciclo) or all(x >= 2 for x in ciclo):
+            ciclos_count["continuo"] += 1
+        else:
+            ciclos_count["alternado"] += 1
+
+    return ciclos_count            
+
 def probabilidade_padrao_minutos_intervalos(
-    velas=[], galho=2, targetVela=2, minProbabilidade=90
+    velas=[], galho=0, targetVela=2, minProbabilidade=90
 ):
     result = {
         3: {
@@ -212,7 +231,7 @@ def media_velas(velas=[]):
         'media': int(len(velas2x)/len(velas)*100),
         'media_tempo': _media_vela_tempo(velas2x)
     }
-    
+
     intervalos["3x"] = {
         'qtd': len(velas3x),
         'media': int(len(velas3x)/len(velas)*100),
@@ -276,7 +295,7 @@ def probabilidade_padrao_minutos_soma_digitos(
 
 
 def probabilidade_padrao_intervalos_para_velaX(
-    velas=[], minVela=2, maxVela=3, minutos=3, galho=2, targetVela=2
+    velas=[], minVela=2, maxVela=3, minutos=3, galho=0, targetVela=2
 ):
     tries = 0
     hit = 0
