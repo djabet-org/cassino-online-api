@@ -20,13 +20,13 @@ def get_estrategias(velas=[], qtd_galho=0, targetVela=2, minProbabilidade=90, pa
                     "3x": {
                         "minuto": {
                             "3": probabilidade_padrao_intervalos_para_velaX(
-                                velas, 3, 5, 3, targetVela
+                                velas, 3, 5, 3, qtd_galho, targetVela
                             ),
                             "4": probabilidade_padrao_intervalos_para_velaX(
-                                velas, 3, 5, 4, targetVela
+                                velas, 3, 5, 4, qtd_galho, targetVela
                             ),
                             "5": probabilidade_padrao_intervalos_para_velaX(
-                                velas, 3, 5, 5, targetVela
+                                velas, 3, 5, 5, qtd_galho, targetVela
                             ),
                         }
                     },
@@ -63,7 +63,8 @@ def get_estrategias(velas=[], qtd_galho=0, targetVela=2, minProbabilidade=90, pa
         "entrada_agora": {
             'probabilidade': probabilidade_padrao(velas, qtd_galho, targetVela, _mapPadraoFromVelas(velas[-4:])),
             'padrao': _mapPadraoFromVelas(velas[-4:])                                                  
-        }
+        },
+        "ciclos": catalogar_ciclos(velas)
     }
 
     for minuto in ["3", "4", "5"]:
@@ -431,21 +432,24 @@ def _build_minutos_probabilidades(result, minProbabilidade):
 
 
 def fetch_contagem_cores(velas=[]):
+
+    global last_time_alert_sent
+
     contagem = dict()
-    qtdPreta = qtdVerde = 0
+    qtdPreta = qtd_verde = 0
     qtd_velas = len(velas)
 
     for vela in velas:
         if vela["vela"] >= 2:
-            qtdVerde += 1
+            qtd_verde += 1
         else:
             qtdPreta += 1
 
     contagem["qtdPreta"] = qtdPreta
-    contagem["qtdVerde"] = qtdVerde
+    contagem["qtdVerde"] = qtd_verde
     contagem["percentagePreta"] = "{:.0%}".format(qtdPreta / int(qtd_velas))
-    contagem["percentageVerde"] = "{:.0%}".format(qtdVerde / int(qtd_velas))
-
+    contagem["percentageVerde"] = "{:.0%}".format(qtd_verde / int(qtd_velas))
+    
     return contagem
 
 
