@@ -1,6 +1,6 @@
 from __future__ import division
 from datetime import datetime
-from .cassino_database_manager import fetch_double_rolls
+from ..cassino_database_manager import fetch_double_rolls
 
 def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0, targetColor = '*'):
     return {

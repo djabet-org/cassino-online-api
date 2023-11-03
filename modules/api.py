@@ -10,7 +10,7 @@ from .crash.crash_manager import (
     _build_padroes
 )
 
-from .double_manager import (
+from .double.double_manager import (
     calculate_rolls_distribution,
     fetch_rolls,
     get_estrategias_double,
@@ -21,12 +21,6 @@ from .double_manager import (
 from app import app
 from flask import jsonify, request
 from flask_cors import cross_origin
-
-# from flask_socketio import send, emit
-# @socketio.on('opa')
-# def handle_json(msg):
-#     print('msg: ' + str(msg))
-
 
 # Define route "/api".
 @app.route("/api")
@@ -93,19 +87,19 @@ def crashPadroesProbabilidades(platform):
 def doubleDashboard(platform):
 
     args = request.args
-    qtdRolls = args.get("qtdRolls", default=200, type=int)
-    galho = args.get("galho", default=2, type=int)
-    minProbabilidade = args.get("minProbabilidade", default=0, type=int)
-    targetColor = args.get("targetColor", default='*', type=str)
+    qtd_rolls = args.get("qtdRolls", default=200, type=int)
+    qtd_galho = args.get("galho", default=2, type=int)
+    min_probabilidade = args.get("minProbabilidade", default=0, type=int)
+    target_color = args.get("targetColor", default='*', type=str)
     padroes = args.getlist("padrao")
 
     # return in JSON format. (For API)
-    descRolls = fetch_rolls(platform, qtdRolls)
+    descRolls = fetch_rolls(platform, qtd_rolls)
     ascRolls = list(reversed(descRolls))
 
     result = dict()
     result["contagem_cores"] = calculate_rolls_distribution(descRolls)
-    result["estrategias"] = get_estrategias_double(ascRolls, galho, padroes, minProbabilidade, targetColor)
+    result["estrategias"] = get_estrategias_double(ascRolls, qtd_galho, padroes, min_probabilidade, target_color)
     result["rolls"] = descRolls
     result["balance"] = calculate_balance_rolls(ascRolls)
     
