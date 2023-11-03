@@ -1,12 +1,13 @@
 # This file is part of https://github.com/jainamoswal/Flask-Example.
 # Usage covered in <IDC lICENSE>
 # Jainam Oswal. <jainam.me>
-from .crash_manager import (
+from .crash.crash_manager import (
     media_velas,
     fetch_contagem_cores,
     get_estrategias,
     fetch_velas,
-    calculate_balance
+    calculate_balance,
+    _build_padroes
 )
 
 from .double_manager import (
@@ -39,23 +40,52 @@ def api():
 def crashDashboard(platform):
     args = request.args
     qtd_velas = args.get("qtdVelas", default=200, type=int)
-    qtd_galho = args.get("qtdGalho", default=2, type=int)
+    qtd_galho = args.get("qtdGalho", default=0, type=int)
     target_vela = args.get("targetVela", default=2, type=int)
     min_probabilidade = args.get("minProbabilidade", default=50, type=int)
     padroes = args.getlist("padrao")
-    print('padroes ', padroes)
 
-    # return in JSON format. (For API)
     descVelas = fetch_velas(platform, qtd_velas)
     ascVelas = list(reversed(descVelas))
+    search_filter = {
+        'velas': ascVelas,
+        'qtd_velas': qtd_velas,
+        'qtd_galho': qtd_galho,
+        'target_vela': target_vela,
+        'min_probabilidade': min_probabilidade,
+        'padroes': padroes
+    }
+
+    # return in JSON format. (For API)
 
     result = dict()
     result["media_velas"] = media_velas(ascVelas)
-    result["estrategias"] = get_estrategias(ascVelas, qtd_galho, target_vela, min_probabilidade, padroes)
+    result["estrategias"] = get_estrategias(search_filter)
     result["contagem_cores"] = fetch_contagem_cores(ascVelas)
     result["velas"] = descVelas
     result['balance'] = calculate_balance(ascVelas)
     return jsonify(result)
+
+@app.route("/api/<platform>/crash/padroes")
+def crashPadroesProbabilidades(platform):
+    args = request.args
+    qtd_velas = args.get("qtdVelas", default=100, type=int)
+    qtd_galho = args.get("qtdGalho", default=0, type=int)
+    target_vela = args.get("targetVela", default=2, type=int)
+    min_probabilidade = args.get("minProbabilidade", default=50, type=int)
+    padroes = args.getlist("padrao")
+
+    descVelas = fetch_velas(platform, qtd_velas)
+    ascVelas = list(reversed(descVelas))
+    search_filter = {
+        'velas': ascVelas,
+        'qtd_velas': qtd_velas,
+        'qtd_galho': qtd_galho,
+        'target_vela': target_vela,
+        'min_probabilidade': min_probabilidade,
+        'padroes': padroes
+    }
+    return _build_padroes(search_filter)
 
 
 @app.route("/api/<platform>/double/dashboard")
