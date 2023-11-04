@@ -14,7 +14,8 @@ from .double.double_manager import (
     calculate_rolls_distribution,
     fetch_rolls,
     get_estrategias_double,
-    calculate_balance_rolls
+    calculate_balance_rolls,
+    probabilidade_padroes_cores
 )
 
 # Import Libraries
@@ -80,6 +81,21 @@ def crashPadroesProbabilidades(platform):
         'padroes': padroes
     }
     return _build_padroes(search_filter)
+
+@app.route("/api/<platform>/double/padroes")
+def doublePadroesProbabilidades(platform):
+    args = request.args
+    qtd_rolls = args.get("qtdRolls", default=200, type=int)
+    qtd_galho = args.get("galho", default=2, type=int)
+    min_probabilidade = args.get("minProbabilidade", default=0, type=int)
+    target_color = args.get("targetColor", default='*', type=str)
+    padroes = args.getlist("padrao")
+
+    # return in JSON format. (For API)
+    descRolls = fetch_rolls(platform, qtd_rolls)
+    ascRolls = list(reversed(descRolls))
+
+    return probabilidade_padroes_cores(ascRolls, padroes, qtd_galho, min_probabilidade, target_color)
 
 
 @app.route("/api/<platform>/double/dashboard")
