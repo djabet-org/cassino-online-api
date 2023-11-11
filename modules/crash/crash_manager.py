@@ -294,9 +294,9 @@ def probabilidade_padrao_intervalos_para_velaX(
 
 
 def probabilidade_padrao_minutos_fixo(search_filter={}):
-    velas = search_filter.get("velas", [])
-    qtd_galho = search_filter.get("qtd_galho", 0)
-    target_vela = search_filter.get("target_vela", 0)
+    velas = search_filter.get("velas")
+    qtd_galho = search_filter.get("qtd_galho")
+    target_vela = search_filter.get("target_vela")
     last_minute = None
 
     minutosProbabilidades = _minutosProbabilidades()
@@ -305,7 +305,8 @@ def probabilidade_padrao_minutos_fixo(search_filter={}):
         velaMinute = datetime.fromtimestamp(vela["created"]).minute % 10
         if last_minute == velaMinute:
             continue
-        velasToVerify = velas[i : qtd_galho + 1]
+        velasToVerify = velas[i : i+qtd_galho + 1]
+        print(velasToVerify)
         minutosProbabilidades[velaMinute]["hit"] += (
             1 if any(_isGreen(vela, target_vela) for vela in velasToVerify) else 0
         )
