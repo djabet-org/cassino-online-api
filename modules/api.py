@@ -101,10 +101,9 @@ def doublePadroesProbabilidades(platform):
 @app.route("/api/<platform>/double/dashboard")
 @cross_origin()
 def doubleDashboard(platform):
-
     args = request.args
     qtd_rolls = args.get("qtdRolls", default=200, type=int)
-    qtd_galho = args.get("galho", default=2, type=int)
+    qtd_galho = args.get("qtdGalho", default=0, type=int)
     min_probabilidade = args.get("minProbabilidade", default=0, type=int)
     target_color = args.get("targetColor", default='*', type=str)
     padroes = args.getlist("padrao")
