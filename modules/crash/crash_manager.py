@@ -321,39 +321,39 @@ def intervalos_para_vela(search_filter):
         "3x": {
             "minuto": {
                 "3": probabilidade_padrao_intervalos_para_velaX(
-                    [3, 5], 3, search_filter
+                    [3, 500000], 3, search_filter
                 ),
                 "4": probabilidade_padrao_intervalos_para_velaX(
-                    [3, 5], 4, search_filter
+                    [3, 500000], 4, search_filter
                 ),
                 "5": probabilidade_padrao_intervalos_para_velaX(
-                    [3, 5], 5, search_filter
+                    [3, 500000], 5, search_filter
                 ),
             }
         },
         "5x": {
             "minuto": {
                 "3": probabilidade_padrao_intervalos_para_velaX(
-                    [5, 10], 3, search_filter
+                    [5, 1000000], 3, search_filter
                 ),
                 "4": probabilidade_padrao_intervalos_para_velaX(
-                    [5, 10], 4, search_filter
+                    [5, 1000000], 4, search_filter
                 ),
                 "5": probabilidade_padrao_intervalos_para_velaX(
-                    [5, 10], 5, search_filter
+                    [5, 1000000], 5, search_filter
                 ),
             }
         },
         "10x": {
             "minuto": {
                 "3": probabilidade_padrao_intervalos_para_velaX(
-                    [10, 50], 3, search_filter
+                    [10, 5000000], 3, search_filter
                 ),
                 "4": probabilidade_padrao_intervalos_para_velaX(
-                    [10, 50], 4, search_filter
+                    [10, 500000], 4, search_filter
                 ),
                 "5": probabilidade_padrao_intervalos_para_velaX(
-                    [10, 50], 5, search_filter
+                    [10, 500000], 5, search_filter
                 ),
             }
         },
