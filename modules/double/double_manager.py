@@ -210,9 +210,9 @@ def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 0, minProbabil
     result = {}
     for padrao in padroes:
             result[padrao] = {
-                'red': _probabilidade_padrao_cor(rolls, padrao, 'red', galho),
-                'black': _probabilidade_padrao_cor(rolls, padrao, 'black', galho),
-                'white':_probabilidade_padrao_cor(rolls, padrao, 'white', galho)
+                'red': _probabilidade_padrao(rolls, padrao, 'red', galho),
+                'black': _probabilidade_padrao(rolls, padrao, 'black', galho),
+                'white':_probabilidade_padrao(rolls, padrao, 'white', galho)
             }
 
     result = _filterByTargetColor(result, targetColor)
@@ -306,7 +306,7 @@ def _filterByMinProbabilidade(probabilidades = {}, minProbabilidade = 0):
             filteredResult[padrao] = padraoProbabilidades
     return filteredResult
 
-def _probabilidade_padrao_cor(rolls=[], pattern='', targetColor="", galho=0):
+def _probabilidade_padrao(rolls=[], pattern='', targetColor="", galho=0):
     pattern = _mapPattern(pattern)
     patternLength = len(pattern)
     hit = total = 0
@@ -327,7 +327,7 @@ def _probabilidade_padrao_cor(rolls=[], pattern='', targetColor="", galho=0):
 
 def __is_pattern_found(rolls = [], pattern = [], ignoreNumber = True):
     rolls_colors = list(map(lambda r: r['color'], rolls))
-    return rolls_colors == pattern
+    return all(pattern[i] == rolls_colors[i] or pattern[i] == '*' for i in range(len(pattern)))
 
 def _mapPattern(pattern=''):
     splittedPattern = pattern.split(',')
@@ -337,6 +337,9 @@ def _mapPattern(pattern=''):
             mappedPattern.append('red')
         elif p == 'b':
             mappedPattern.append('black')
-        else:
+        elif p == 'w':
             mappedPattern.append('white')
+        else:
+            mappedPattern.append('*')
+
     return mappedPattern
