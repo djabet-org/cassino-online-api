@@ -23,6 +23,11 @@ from app import app
 from flask import jsonify, request
 from flask_cors import cross_origin
 
+@app.before_request
+def log_request_info():
+    app.logger.debug('Headers: %s', request.headers)
+    app.logger.debug('Body: %s', request.get_data())
+    
 # Define route "/api".
 @app.route("/api")
 def api():
