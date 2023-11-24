@@ -88,25 +88,8 @@ def crashPadroesProbabilidades(platform):
     }
     return _build_padroes(search_filter)
 
-@app.route("/api/<platform>/double/padroes")
+@app.route("/api/<platform>/double/estrategias")
 def doublePadroesProbabilidades(platform):
-    args = request.args
-    qtd_rolls = args.get("qtdRolls", default=200, type=int)
-    qtd_galho = args.get("galho", default=2, type=int)
-    min_probabilidade = args.get("minProbabilidade", default=0, type=int)
-    target_color = args.get("targetColor", default='*', type=str)
-    padroes = args.getlist("padrao")
-
-    # return in JSON format. (For API)
-    descRolls = fetch_rolls(platform, qtd_rolls)
-    ascRolls = list(reversed(descRolls))
-
-    return probabilidade_padroes_cores(ascRolls, padroes, qtd_galho, min_probabilidade, target_color)
-
-
-@app.route("/api/<platform>/double/dashboard")
-@cross_origin()
-def doubleDashboard(platform):
     args = request.args
     qtd_rolls = args.get("qtdRolls", default=200, type=int)
     qtd_galho = args.get("qtdGalho", default=0, type=int)
@@ -119,8 +102,21 @@ def doubleDashboard(platform):
     ascRolls = list(reversed(descRolls))
 
     result = dict()
-    result["contagem_cores"] = calculate_rolls_distribution(descRolls)
     result["estrategias"] = get_estrategias_double(ascRolls, qtd_galho, padroes, min_probabilidade, target_color)
+    
+    return jsonify(result)
+
+@app.route("/api/<platform>/double/dashboard")
+@cross_origin()
+def doubleDashboard(platform):
+    args = request.args
+    qtd_rolls = args.get("qtdRolls", default=200, type=int)
+    # return in JSON format. (For API)
+    descRolls = fetch_rolls(platform, qtd_rolls)
+    ascRolls = list(reversed(descRolls))
+
+    result = dict()
+    result["contagem_cores"] = calculate_rolls_distribution(descRolls)
     result["rolls"] = descRolls
     result["balance"] = calculate_balance_rolls(ascRolls)
     
