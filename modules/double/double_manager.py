@@ -20,7 +20,7 @@ def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0
                 "red": probabilidade_padrao_minutos_fixo(rolls, galho, "red"),
             },
         },
-        "padroes": probabilidade_padroes_cores(rolls, padroes, galho, minProbabilidade, targetColor),        
+        "padroes": probabilidade_padroes_cores(rolls, padroes, galho),        
     }
 
 def getPermutations():
@@ -212,17 +212,10 @@ def fetch_rolls(platform, qtd_rolls):
         )
     )
 
-def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 0, minProbabilidade = 0, targetColor = '*'):
+def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 0):
     result = {}
     for padrao in padroes:
-            result[padrao] = {
-                'red': _probabilidade_padrao(rolls, padrao, 'red', galho),
-                'black': _probabilidade_padrao(rolls, padrao, 'black', galho),
-                'white':_probabilidade_padrao(rolls, padrao, 'white', galho)
-            }
-
-    result = _filterByTargetColor(result, targetColor)
-    result = _filterByMinProbabilidade(result, minProbabilidade)
+            result[padrao] = _probabilidade_padrao(rolls, padrao, galho)
 
     return result    
 
@@ -312,24 +305,34 @@ def _filterByMinProbabilidade(probabilidades = {}, minProbabilidade = 0):
             filteredResult[padrao] = padraoProbabilidades
     return filteredResult
 
-def _probabilidade_padrao(rolls=[], pattern='', targetColor="", galho=0):
+def _probabilidade_padrao(rolls=[], pattern='', galho=0):
     pattern = _mapPattern(pattern)
     patternLength = len(pattern)
-    hit = total = 0
+    total = hitRed = hitBlack = hitWhite = 0
     i = 0
+
     while i < len(rolls)-patternLength:
         rollsToBeChecked = rolls[i:i+patternLength]
         
         if not __is_pattern_found(rollsToBeChecked, pattern):
             i += 1
             continue
+
         entradas = rolls[i + patternLength : i + patternLength + galho + 1]
-        if any(entrada["color"] == targetColor for entrada in entradas):
-            hit += 1
+        if any(entrada["color"] == 'red' for entrada in entradas):
+            hitRed += 1
+        if any(entrada["color"] == 'black' for entrada in entradas):
+            hitBlack += 1
+        if any(entrada["color"] == 'white' for entrada in entradas):
+            hitWhite += 1
+
         total += 1
         i += (patternLength + galho+1)
-    probabilidade = int(0 if not total else (hit / total) * 100)
-    return {"hit": hit, "tried": total, "probabilidade": probabilidade}
+    return {
+        'black': {"hit": hitBlack, "tried": total, "probabilidade": int(0 if not total else (hitBlack / total) * 100)},
+        'red': {"hit": hitRed, "tried": total, "probabilidade": int(0 if not total else (hitRed / total) * 100)},
+        'white': {"hit": hitWhite, "tried": total, "probabilidade": int(0 if not total else (hitWhite / total) * 100)},
+    }
 
 def __is_pattern_found(rolls = [], pattern = [], ignoreNumber = True):
     rolls_colors = list(map(lambda r: r['color'], rolls))
