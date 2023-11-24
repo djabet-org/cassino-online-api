@@ -27,7 +27,6 @@ def getPermutations():
    result = [','.join(list(permutation)) for permutation in itertools.product(['r', 'b', 'w'], repeat=4)] 
    result.extend([','.join(list(permutation)) for permutation in itertools.product(['r', 'b', 'w'], repeat=5)] ) 
    result.extend([','.join(list(permutation)) for permutation in itertools.product(['r', 'b', 'w'], repeat=6)] ) 
-   result.extend([','.join(list(permutation)) for permutation in itertools.product(['r', 'b', 'w'], repeat=7)] ) 
    return result
 
 def calculate_rolls_distribution(rolls=[]):
