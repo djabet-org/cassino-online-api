@@ -15,7 +15,8 @@ from .double.double_manager import (
     fetch_rolls,
     get_estrategias_double,
     calculate_balance_rolls,
-    probabilidade_padroes_cores
+    probabilidade_padroes_cores,
+    getPermutations
 )
 
 # Import Libraries
@@ -111,7 +112,7 @@ def doubleDashboard(platform):
     qtd_galho = args.get("qtdGalho", default=0, type=int)
     min_probabilidade = args.get("minProbabilidade", default=0, type=int)
     target_color = args.get("targetColor", default='*', type=str)
-    padroes = args.getlist("padrao")
+    padroes = getPermutations()
 
     # return in JSON format. (For API)
     descRolls = fetch_rolls(platform, qtd_rolls)
