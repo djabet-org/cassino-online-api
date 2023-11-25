@@ -4,6 +4,7 @@ from ..cassino_database_manager import fetch_double_rolls
 import itertools
 
 def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0, targetColor = '*'):
+    
     return {
         "numero_cor_probabilidades": calculate_roll_next_color_probability(
             rolls, galho, targetColor, minProbabilidade
@@ -20,7 +21,7 @@ def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0
                 "red": probabilidade_padrao_minutos_fixo(rolls, galho, "red"),
             },
         },
-        "padroes": probabilidade_padroes_cores(rolls, padroes, galho),        
+        "padroes": probabilidade_padroes_cores(rolls, padroes, galho, targetColor, minProbabilidade ),        
     }
 
 def getPermutations():
@@ -212,10 +213,10 @@ def fetch_rolls(platform, qtd_rolls):
         )
     )
 
-def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 0):
+def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 0,  target_color='*', min_probabilidade = 50):
     result = {}
     for padrao in padroes:
-            result[padrao] = _probabilidade_padrao(rolls, padrao, galho)
+            result[padrao] = _probabilidade_padrao(rolls, padrao, galho, target_color, min_probabilidade)
 
     return result    
 
@@ -305,7 +306,7 @@ def _filterByMinProbabilidade(probabilidades = {}, minProbabilidade = 0):
             filteredResult[padrao] = padraoProbabilidades
     return filteredResult
 
-def _probabilidade_padrao(rolls=[], pattern='', galho=0):
+def _probabilidade_padrao(rolls=[], pattern='', galho=0, targetColor='*', minProbabilidade=50):
     pattern = _mapPattern(pattern)
     patternLength = len(pattern)
     total = hitRed = hitBlack = hitWhite = 0
@@ -328,11 +329,20 @@ def _probabilidade_padrao(rolls=[], pattern='', galho=0):
 
         total += 1
         i += (patternLength + galho+1)
-    return {
-        'black': {"hit": hitBlack, "tried": total, "probabilidade": int(0 if not total else (hitBlack / total) * 100)},
-        'red': {"hit": hitRed, "tried": total, "probabilidade": int(0 if not total else (hitRed / total) * 100)},
-        'white': {"hit": hitWhite, "tried": total, "probabilidade": int(0 if not total else (hitWhite / total) * 100)},
-    }
+    
+    probabilidadeBlack = int(0 if not total else (hitBlack / total) * 100)
+    probabilidadeRed = int(0 if not total else (hitRed / total) * 100)
+    probabilidadeWhite = int(0 if not total else (hitWhite / total) * 100)
+
+    result = {}
+    if (probabilidadeBlack >= minProbabilidade and (targetColor == 'black' or targetColor == '*')):
+        result['black'] = {"hit": hitBlack, "tried": total, "probabilidade": probabilidadeBlack}
+    if (probabilidadeWhite >= minProbabilidade and (targetColor == 'white' or targetColor == '*')):
+        result['white'] = {"hit": hitWhite, "tried": total, "probabilidade": probabilidadeWhite}
+    if (probabilidadeRed >= minProbabilidade and (targetColor == 'red' or targetColor == '*')):
+        result['red'] = {"hit": hitRed, "tried": total, "probabilidade": probabilidadeRed},        
+
+    return result
 
 def __is_pattern_found(rolls = [], pattern = [], ignoreNumber = True):
     rolls_colors = list(map(lambda r: r['color'], rolls))
