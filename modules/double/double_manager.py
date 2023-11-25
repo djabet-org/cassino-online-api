@@ -340,7 +340,7 @@ def _probabilidade_padrao(rolls=[], pattern='', galho=0, targetColor='*', minPro
     if (probabilidadeWhite >= minProbabilidade and (targetColor == 'white' or targetColor == '*')):
         result['white'] = {"hit": hitWhite, "tried": total, "probabilidade": probabilidadeWhite}
     if (probabilidadeRed >= minProbabilidade and (targetColor == 'red' or targetColor == '*')):
-        result['red'] = {"hit": hitRed, "tried": total, "probabilidade": probabilidadeRed},        
+        result['red'] = {"hit": hitRed, "tried": total, "probabilidade": probabilidadeRed}       
 
     return result
 
