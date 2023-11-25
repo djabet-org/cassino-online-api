@@ -335,6 +335,10 @@ def _probabilidade_padrao(rolls=[], pattern='', galho=0, targetColor='*', minPro
     probabilidadeWhite = int(0 if not total else (hitWhite / total) * 100)
 
     result = {}
+
+    if total < 5:
+        return result
+    
     if (probabilidadeBlack >= minProbabilidade and (targetColor == 'black' or targetColor == '*')):
         result['black'] = {"hit": hitBlack, "tried": total, "probabilidade": probabilidadeBlack}
     if (probabilidadeWhite >= minProbabilidade and (targetColor == 'white' or targetColor == '*')):
