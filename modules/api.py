@@ -15,14 +15,14 @@ from .double.double_manager import (
     fetch_rolls,
     get_estrategias_double,
     calculate_balance_rolls,
-    probabilidade_padroes_cores,
     getPermutations
 )
 
 # Import Libraries
 from app import app
-from flask import jsonify, request
+from flask import jsonify, request, Response
 from flask_cors import cross_origin
+from sseclient import SSEClient
 
 @app.before_request
 def log_request_info():
@@ -89,7 +89,7 @@ def crashPadroesProbabilidades(platform):
     return _build_padroes(search_filter)
 
 @app.route("/api/<platform>/double/estrategias")
-def doublePadroesProbabilidades(platform):
+def doublePadroesEstrategias(platform):
     args = request.args
     qtd_rolls = args.get("qtdRolls", default=200, type=int)
     qtd_galho = args.get("qtdGalho", default=0, type=int)
@@ -135,3 +135,18 @@ def delete(qtd_velas):
     result["contagem_cores"] = fetch_contagem_cores(reversedVelas)
     result["velas"] = velas
     return jsonify(result)
+
+@app.route("/stream/<platform>/<mode>")
+@cross_origin()
+def ingested(platform, mode):
+    def eventIngested(platform, mode):       
+
+        messages = SSEClient(f'https://cassino-database-manager-production.up.railway.app/stream/{platform}/{mode}')
+        for msg in messages:
+              print(msg)
+              if mode == 'double':
+                descRolls = fetch_rolls(platform, 200)
+                contagemCores = calculate_rolls_distribution(descRolls)                
+                yield 'data: {}\n\n'.format(contagemCores)              
+    
+    return Response(eventIngested(platform, mode), mimetype="text/event-stream")
