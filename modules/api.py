@@ -139,14 +139,17 @@ def delete(qtd_velas):
 @app.route("/stream/<platform>/<mode>")
 @cross_origin()
 def ingested(platform, mode):
-    def eventIngested(platform, mode):       
-
+    def eventIngested(platform, mode):
         messages = SSEClient(f'https://cassino-database-manager-production.up.railway.app/stream/{platform}/{mode}')
         for msg in messages:
               print(msg)
               if mode == 'double':
                 descRolls = fetch_rolls(platform, 200)
                 contagemCores = calculate_rolls_distribution(descRolls)                
-                yield 'data: {}\n\n'.format(contagemCores)              
+                yield 'data: {}\n\n'.format(contagemCores)
+              else:
+                velas = fetch_velas(platform, 200)
+                contagemCores = fetch_contagem_cores(velas)
+                yield 'data: {}\n\n'.format(contagemCores)                
     
     return Response(eventIngested(platform, mode), mimetype="text/event-stream")
