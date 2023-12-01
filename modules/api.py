@@ -73,7 +73,8 @@ def crashPadroesEstrategias(platform):
         'min_probabilidade': min_probabilidade,
         'padroes': padroes
     }
-    return _build_padroes(search_filter)
+
+    return get_estrategias(search_filter)
 
 @app.route("/api/<platform>/double/estrategias")
 def doublePadroesEstrategias(platform):
