@@ -14,8 +14,7 @@ from .double.double_manager import (
     calculate_rolls_distribution,
     fetch_rolls,
     get_estrategias_double,
-    calculate_balance_rolls,
-    getPermutations
+    calculate_balance_rolls
 )
 
 # Import Libraries
@@ -23,6 +22,7 @@ from app import app
 from flask import jsonify, request, Response
 from flask_cors import cross_origin
 from sseclient import SSEClient
+import itertools
 
 @app.before_request
 def log_request_info():
@@ -41,40 +41,27 @@ def api():
 def crashDashboard(platform):
     args = request.args
     qtd_velas = args.get("qtdVelas", default=200, type=int)
-    qtd_galho = args.get("qtdGalho", default=0, type=int)
-    target_vela = args.get("targetVela", default=2, type=int)
-    min_probabilidade = args.get("minProbabilidade", default=50, type=int)
-    padroes = args.getlist("padrao")
 
     descVelas = fetch_velas(platform, qtd_velas)
     ascVelas = list(reversed(descVelas))
-    search_filter = {
-        'velas': ascVelas,
-        'qtd_velas': qtd_velas,
-        'qtd_galho': qtd_galho,
-        'target_vela': target_vela,
-        'min_probabilidade': min_probabilidade,
-        'padroes': padroes
-    }
-
+    
     # return in JSON format. (For API)
 
     result = dict()
     result["media_velas"] = media_velas(ascVelas)
-    result["estrategias"] = get_estrategias(search_filter)
     result["contagem_cores"] = fetch_contagem_cores(ascVelas)
     result["velas"] = descVelas
     result['balance'] = calculate_balance(ascVelas)
     return jsonify(result)
 
-@app.route("/api/<platform>/crash/padroes")
-def crashPadroesProbabilidades(platform):
+@app.route("/api/<platform>/crash/estrategias")
+def crashPadroesEstrategias(platform):
     args = request.args
     qtd_velas = args.get("qtdVelas", default=100, type=int)
     qtd_galho = args.get("qtdGalho", default=0, type=int)
     target_vela = args.get("targetVela", default=2, type=int)
     min_probabilidade = args.get("minProbabilidade", default=50, type=int)
-    padroes = args.getlist("padrao")
+    padroes = getPermutations(['1','2'])
 
     descVelas = fetch_velas(platform, qtd_velas)
     ascVelas = list(reversed(descVelas))
@@ -95,7 +82,7 @@ def doublePadroesEstrategias(platform):
     qtd_galho = args.get("qtdGalho", default=0, type=int)
     min_probabilidade = args.get("minProbabilidade", default=0, type=int)
     target_color = args.get("targetColor", default='*', type=str)
-    padroes = getPermutations()
+    padroes = getPermutations(['r', 'b', 'w'])
 
     # return in JSON format. (For API)
     descRolls = fetch_rolls(platform, qtd_rolls)
@@ -153,3 +140,9 @@ def ingested(platform, mode):
                 yield 'data: {}\n\n'.format(contagemCores)                
     
     return Response(eventIngested(platform, mode), mimetype="text/event-stream")
+
+def getPermutations(lista):
+   result = [','.join(list(permutation)) for permutation in itertools.product(lista, repeat=4)] 
+   result.extend([','.join(list(permutation)) for permutation in itertools.product(lista, repeat=5)] ) 
+   result.extend([','.join(list(permutation)) for permutation in itertools.product(lista, repeat=6)] ) 
+   return result

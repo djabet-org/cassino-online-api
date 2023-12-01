@@ -1,7 +1,6 @@
 from __future__ import division
 from datetime import datetime
 from ..cassino_database_manager import fetch_double_rolls
-import itertools
 
 def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0, targetColor = '*'):
     
@@ -23,12 +22,6 @@ def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0
         },
         "padroes": probabilidade_padroes_cores(rolls, padroes, galho, targetColor, minProbabilidade ),        
     }
-
-def getPermutations():
-   result = [','.join(list(permutation)) for permutation in itertools.product(['r', 'b', 'w'], repeat=4)] 
-   result.extend([','.join(list(permutation)) for permutation in itertools.product(['r', 'b', 'w'], repeat=5)] ) 
-   result.extend([','.join(list(permutation)) for permutation in itertools.product(['r', 'b', 'w'], repeat=6)] ) 
-   return result
 
 def calculate_rolls_distribution(rolls=[]):
     contagem = dict()
