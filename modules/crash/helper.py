@@ -43,7 +43,7 @@ def _build_padroes(search_filters):
     for padrao in search_filters['padroes']:
         mappedPadrao = list(map(lambda p: int(p), padrao.split(',')))
         result = _probabilidade_padrao(mappedPadrao, search_filters)
-        if result['probabilidade'] >= search_filters['min_probabilidade']:
+        if result['probabilidade'] >= search_filters['min_probabilidade'] and result['tried'] >= 4:
             padroesFiltrados[padrao] = result
     
     return padroesFiltrados   
