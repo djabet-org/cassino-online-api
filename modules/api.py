@@ -143,7 +143,8 @@ def ingested(platform, mode):
     return Response(eventIngested(platform, mode), mimetype="text/event-stream")
 
 def getPermutations(lista):
-   result = [','.join(list(permutation)) for permutation in itertools.product(lista, repeat=4)] 
+   result = [','.join(list(permutation)) for permutation in itertools.product(lista, repeat=3)] 
+   result.extend([','.join(list(permutation)) for permutation in itertools.product(lista, repeat=4)] ) 
    result.extend([','.join(list(permutation)) for permutation in itertools.product(lista, repeat=5)] ) 
-   result.extend([','.join(list(permutation)) for permutation in itertools.product(lista, repeat=6)] ) 
+   
    return result
