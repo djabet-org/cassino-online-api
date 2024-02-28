@@ -17,7 +17,7 @@ def _probabilidade_padrao(padrao, search_filters):
         total += 1
         i += (padraoSize + qtd_galho)
     probabilidade = int(0 if not total else (hit / total) * 100)
-    return {"hit": hit, "tried": total, "probabilidade": probabilidade}
+    return {"hit": hit, "tried": total, "probabilidade": probabilidade, "targetVela": search_filters['target_vela']}
 
 def _media_vela_tempo(velas=[]):
     if not velas or len(velas) == 1:

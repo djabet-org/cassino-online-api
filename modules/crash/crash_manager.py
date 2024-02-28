@@ -313,8 +313,8 @@ def probabilidade_padrao_minutos_fixo(search_filter={}):
         minutosProbabilidades[velaMinute]["tried"] += 1
         last_minute = velaMinute
 
-    return _mapMinutosProbabilidades(minutosProbabilidades)
-
+    mappedMinutosProbabilidades =_mapMinutosProbabilidades(minutosProbabilidades)
+    return {k: v for k, v in mappedMinutosProbabilidades.items() if v['probabilidade'] >= search_filter['min_probabilidade'] and v['probabilidade'] <= search_filter['max_probabilidade']}
 
 def intervalos_para_vela(search_filter):
     velasMinutos = {

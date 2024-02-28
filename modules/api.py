@@ -61,6 +61,7 @@ def crashPadroesEstrategias(platform):
     qtd_galho = args.get("qtdGalho", default=0, type=int)
     target_vela = args.get("targetVela", default=2, type=int)
     min_probabilidade = args.get("minProbabilidade", default=50, type=int)
+    max_probabilidade = args.get("maxProbabilidade", default=100, type=int)
     padroes = getPermutations(['1','2'])
 
     descVelas = fetch_velas(platform, qtd_velas)
@@ -71,6 +72,7 @@ def crashPadroesEstrategias(platform):
         'qtd_galho': qtd_galho,
         'target_vela': target_vela,
         'min_probabilidade': min_probabilidade,
+        'max_probabilidade': max_probabilidade,
         'padroes': padroes
     }
 
