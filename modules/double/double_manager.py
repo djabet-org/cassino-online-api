@@ -2,11 +2,11 @@ from __future__ import division
 from datetime import datetime
 from ..cassino_database_manager import fetch_double_rolls
 
-def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0, targetColor = '*'):
+def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0, maxProbabilidade = 100, targetColor = '*'):
     
     return {
         "numero_cor_probabilidades": calculate_roll_next_color_probability(
-            rolls, galho, targetColor, minProbabilidade
+            rolls, galho, targetColor, minProbabilidade, maxProbabilidade
         ),
         "minutagem": {
             "intervalos": {
@@ -181,11 +181,11 @@ def probabilidade_padrao_minutos_fixo(rolls=[], galho=0, desiredColor=""):
     return result
 
 
-def calculate_roll_next_color_probability(rolls=[], galho=0, targetColor='*', minProbabilidade=0):
+def calculate_roll_next_color_probability(rolls=[], galho=0, targetColor='*', minProbabilidade=0, maxProbabilidade=100):
     result = _buildProbabilidadesMatrix(rolls, galho)
     result = _mapProbabilities(result)
     result = _filterByTargetColor(result, targetColor)
-    result = _filterByMinProbabilidade(result, minProbabilidade)
+    result = _filterByMinAndMaxProbabilidade(result, minProbabilidade, maxProbabilidade)
     
     return result
 
@@ -289,11 +289,13 @@ def _mapProbabilities( result = {}):
         }
     return newResult    
 
-def _filterByMinProbabilidade(probabilidades = {}, minProbabilidade = 0):
+def _filterByMinAndMaxProbabilidade(probabilidades = {}, minProbabilidade = 0, maxProbabilidade = 100):
+    print('creu ', probabilidades)
     filteredResult = {}
     for padrao in probabilidades:
             padraoProbabilidades = {color: probabilidades[padrao][color] for color in probabilidades[padrao] 
-                                    if probabilidades[padrao][color]['probabilidade'] >= minProbabilidade }
+                                    if probabilidades[padrao][color]['probabilidade'] >= minProbabilidade and
+                                     probabilidades[padrao][color]['probabilidade'] <= maxProbabilidade }
             if not padraoProbabilidades:
                 continue
             filteredResult[padrao] = padraoProbabilidades

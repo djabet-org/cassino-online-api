@@ -84,15 +84,16 @@ def doublePadroesEstrategias(platform):
     qtd_rolls = args.get("qtdRolls", default=200, type=int)
     qtd_galho = args.get("qtdGalho", default=0, type=int)
     min_probabilidade = args.get("minProbabilidade", default=0, type=int)
+    max_probabilidade = args.get("maxProbabilidade", default=100, type=int)
     target_color = args.get("targetColor", default='*', type=str)
-    padroes = getPermutations(['r', 'b', 'w'])
+    padroes = getPermutations(['r', 'b', 'w','1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'])
 
     # return in JSON format. (For API)
     descRolls = fetch_rolls(platform, qtd_rolls)
     ascRolls = list(reversed(descRolls))
 
     result = dict()
-    result["estrategias"] = get_estrategias_double(ascRolls, qtd_galho, padroes, min_probabilidade, target_color)
+    result["estrategias"] = get_estrategias_double(ascRolls, qtd_galho, padroes, min_probabilidade, max_probabilidade, target_color)
     
     return jsonify(result)
 
