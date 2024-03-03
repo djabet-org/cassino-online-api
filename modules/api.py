@@ -86,7 +86,7 @@ def doublePadroesEstrategias(platform):
     min_probabilidade = args.get("minProbabilidade", default=0, type=int)
     max_probabilidade = args.get("maxProbabilidade", default=100, type=int)
     target_color = args.get("targetColor", default='*', type=str)
-    padroes = getPermutations(['r', 'b', 'w','1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14'])
+    padroes = getPermutations(['r', 'b', 'w'])
 
     # return in JSON format. (For API)
     descRolls = fetch_rolls(platform, qtd_rolls)
