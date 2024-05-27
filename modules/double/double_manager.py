@@ -20,7 +20,7 @@ def get_estrategias_double(rolls=[], galho=0, padroes = [], minProbabilidade = 0
                 "red": probabilidade_padrao_minutos_fixo(rolls, galho, "red"),
             },
         },
-        "padroes": probabilidade_padroes_cores(rolls, padroes, galho, targetColor, minProbabilidade ),        
+        "padroes": probabilidade_padroes_cores(rolls, padroes, galho, targetColor, minProbabilidade, maxProbabilidade ),        
     }
 
 def calculate_rolls_distribution(rolls=[]):
@@ -206,10 +206,10 @@ def fetch_rolls(platform, qtd_rolls):
         )
     )
 
-def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 0,  target_color='*', min_probabilidade = 50):
+def probabilidade_padroes_cores(rolls = [], padroes = [], galho = 0,  target_color='*', min_probabilidade = 50, max_probabilidade = 100):
     result = {}
     for padrao in padroes:
-            result[padrao] = _probabilidade_padrao(rolls, padrao, galho, target_color, min_probabilidade)
+            result[padrao] = _probabilidade_padrao(rolls, padrao, galho, target_color, min_probabilidade, max_probabilidade)
 
     return result    
 
@@ -301,7 +301,7 @@ def _filterByMinAndMaxProbabilidade(probabilidades = {}, minProbabilidade = 0, m
             filteredResult[padrao] = padraoProbabilidades
     return filteredResult
 
-def _probabilidade_padrao(rolls=[], pattern='', galho=0, targetColor='*', minProbabilidade=50):
+def _probabilidade_padrao(rolls=[], pattern='', galho=0, targetColor='*', minProbabilidade=50, maxProbabilidade=100):
     pattern = _mapPattern(pattern)
     patternLength = len(pattern)
     total = hitRed = hitBlack = hitWhite = 0
@@ -334,11 +334,11 @@ def _probabilidade_padrao(rolls=[], pattern='', galho=0, targetColor='*', minPro
     if total < 5:
         return result
     
-    if (probabilidadeBlack >= minProbabilidade and (targetColor == 'black' or targetColor == '*')):
+    if (probabilidadeBlack >= minProbabilidade and probabilidadeBlack <= maxProbabilidade and (targetColor == 'black' or targetColor == '*')):
         result['black'] = {"hit": hitBlack, "tried": total, "probabilidade": probabilidadeBlack}
-    if (probabilidadeWhite >= minProbabilidade and (targetColor == 'white' or targetColor == '*')):
+    if (probabilidadeWhite >= minProbabilidade and probabilidadeWhite <= maxProbabilidade and (targetColor == 'white' or targetColor == '*')):
         result['white'] = {"hit": hitWhite, "tried": total, "probabilidade": probabilidadeWhite}
-    if (probabilidadeRed >= minProbabilidade and (targetColor == 'red' or targetColor == '*')):
+    if (probabilidadeRed >= minProbabilidade and probabilidadeRed <= maxProbabilidade and (targetColor == 'red' or targetColor == '*')):
         result['red'] = {"hit": hitRed, "tried": total, "probabilidade": probabilidadeRed}       
 
     return result
