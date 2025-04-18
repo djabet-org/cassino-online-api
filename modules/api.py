@@ -5,7 +5,6 @@ from .crash.crash_manager import (
     media_velas,
     fetch_contagem_cores,
     get_estrategias,
-    fetch_velas,
     # fetch_velas,
     calculate_balance,
     _build_padroes,
@@ -53,7 +52,7 @@ def crashDashboard(platform):
     result = dict()
     # result["media_velas"] = media_velas(ascVelas)
     result["contagem_cores"] = fetch_contagem_cores(ascVelas)
-    # result["velas"] = descVelas
+    result["velas"] = descVelas
     # result['balance'] = calculate_balance(ascVelas)
     return jsonify(result)
 
