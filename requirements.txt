@@ -6,3 +6,5 @@ gevent-websocket
 flask-socketio
 flask-cors
 sseclient
+pandas
+openpyxl

@@ -6,8 +6,10 @@ from .crash.crash_manager import (
     fetch_contagem_cores,
     get_estrategias,
     fetch_velas,
+    # fetch_velas,
     calculate_balance,
-    _build_padroes
+    _build_padroes,
+    map_velas
 )
 
 from .double.double_manager import (
@@ -23,6 +25,9 @@ from flask import jsonify, request, Response
 from flask_cors import cross_origin
 from sseclient import SSEClient
 import itertools
+import pandas as pd
+
+velas = []
 
 @app.before_request
 def log_request_info():
@@ -42,17 +47,42 @@ def crashDashboard(platform):
     args = request.args
     qtd_velas = args.get("qtdVelas", default=200, type=int)
 
-    descVelas = fetch_velas(platform, qtd_velas)
+    descVelas = velas
     ascVelas = list(reversed(descVelas))
     
-    # return in JSON format. (For API)
-
     result = dict()
-    result["media_velas"] = media_velas(ascVelas)
+    # result["media_velas"] = media_velas(ascVelas)
     result["contagem_cores"] = fetch_contagem_cores(ascVelas)
-    result["velas"] = descVelas
-    result['balance'] = calculate_balance(ascVelas)
+    # result["velas"] = descVelas
+    # result['balance'] = calculate_balance(ascVelas)
     return jsonify(result)
+
+@app.route("/api/crash/upload", methods=["POST"])
+@cross_origin()
+def upload_file():
+    global velas
+    if 'file' not in request.files:
+        return jsonify({"error": "No file part in the request"}), 400
+
+    file = request.files['file']
+
+    if file.filename == '':
+        return jsonify({"error": "No selected file"}), 400
+
+    if file and file.filename.endswith('.xlsx'):
+        # Process the uploaded xlsx file
+        try:
+            data = pd.read_excel(file)
+            # Example: Convert the data to JSON and return it
+            result = data.to_dict(orient='records')
+            # better_dict = [[value] for item in result for value in item.values()]
+
+            velas = map_velas(result)
+            return jsonify({"data": result}), 200
+        except Exception as e:
+            return jsonify({"error": f"Failed to process the file: {str(e)}"}), 500
+    else:
+        return jsonify({"error": "Invalid file type. Only .xlsx files are allowed"}), 400
 
 @app.route("/api/<platform>/crash/estrategias")
 def crashPadroesEstrategias(platform):
@@ -64,7 +94,7 @@ def crashPadroesEstrategias(platform):
     max_probabilidade = args.get("maxProbabilidade", default=100, type=int)
     padroes = getPermutations(['1','2'])
 
-    descVelas = fetch_velas(platform, qtd_velas)
+    descVelas = velas
     ascVelas = list(reversed(descVelas))
     search_filter = {
         'velas': ascVelas,
@@ -139,9 +169,10 @@ def ingested(platform, mode):
                 contagemCores = calculate_rolls_distribution(descRolls)                
                 yield 'data: {}\n\n'.format(contagemCores)
               else:
-                velas = fetch_velas(platform, 200)
-                contagemCores = fetch_contagem_cores(velas)
-                yield 'data: {}\n\n'.format(contagemCores)                
+                # velas = fetch_velas(platform, 200)
+                # contagemCores = fetch_contagem_cores(velas)
+                # yield 'data: {}\n\n'.format(contagemCores)                
+                yield 'data: {}\n\n'.format([])                
     
     return Response(eventIngested(platform, mode), mimetype="text/event-stream")
 

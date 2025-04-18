@@ -207,6 +207,17 @@ def media_velas(velas=[]):
 
     return intervalos
 
+def map_velas(velas):
+    velasMapped = []
+    for velaData in velas:
+        velaData2 = [value for key, value in velaData.items()]
+        velasMapped.append(
+            {
+                "vela": velaData2[0],
+                "created": velaData2[2]+"-"+velaData2[3]
+            })
+
+    return velasMapped[1:]
 
 def fetch_velas(platform, qtd_velas):
     velas = fetch_crash_points(platform, qtd_velas)
