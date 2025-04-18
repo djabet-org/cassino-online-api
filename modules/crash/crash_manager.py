@@ -19,11 +19,11 @@ from .helper import (
 def get_estrategias(search_filter={}):
     velas = search_filter.get("velas", [])
     result = {
-        "minutagem": {
-            "minutos_fixo": probabilidade_padrao_minutos_fixo(search_filter),
-            "intervalos": probabilidade_padrao_minutos_intervalos(search_filter),
-            "intervalos_para_vela": {"vela": intervalos_para_vela(search_filter)},
-        },
+        # "minutagem": {
+        #     "minutos_fixo": probabilidade_padrao_minutos_fixo(search_filter),
+        #     "intervalos": probabilidade_padrao_minutos_intervalos(search_filter),
+        #     "intervalos_para_vela": {"vela": intervalos_para_vela(search_filter)},
+        # },
         "padroes": _build_padroes(search_filter),
         "entrada_agora": {
             "probabilidade": _probabilidade_padrao(

@@ -85,6 +85,7 @@ def upload_file():
 
 @app.route("/api/<platform>/crash/estrategias")
 def crashPadroesEstrategias(platform):
+    global velas
     args = request.args
     qtd_velas = args.get("qtdVelas", default=100, type=int)
     qtd_galho = args.get("qtdGalho", default=0, type=int)
