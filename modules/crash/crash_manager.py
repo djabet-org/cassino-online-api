@@ -25,13 +25,13 @@ def get_estrategias(search_filter={}):
         #     "intervalos_para_vela": {"vela": intervalos_para_vela(search_filter)},
         # },
         "padroes": _build_padroes(search_filter),
-        "entrada_agora": {
-            "probabilidade": _probabilidade_padrao(
-                _mapPadraoFromVelas(velas[-4:]), search_filter
-            ),
-            "padrao": _mapPadraoFromVelas(velas[-4:]),
-        },
-        "ciclos": catalogar_ciclos(velas),
+        # "entrada_agora": {
+        #     "probabilidade": _probabilidade_padrao(
+        #         _mapPadraoFromVelas(velas[-4:]), search_filter
+        #     ),
+        #     "padrao": _mapPadraoFromVelas(velas[-4:]),
+        # },
+        # "ciclos": catalogar_ciclos(velas),
     }
 
     # for minuto in ["3", "4", "5"]:

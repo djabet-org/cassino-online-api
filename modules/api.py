@@ -89,7 +89,7 @@ def crashPadroesEstrategias(platform):
     args = request.args
     qtd_velas = args.get("qtdVelas", default=100, type=int)
     qtd_galho = args.get("qtdGalho", default=0, type=int)
-    target_vela = args.get("targetVela", default=2, type=int)
+    target_vela = args.get("targetVela", default=2.0, type=float)
     min_probabilidade = args.get("minProbabilidade", default=50, type=int)
     max_probabilidade = args.get("maxProbabilidade", default=100, type=int)
     padroes = getPermutations(['1','2'])
@@ -177,7 +177,7 @@ def ingested(platform, mode):
     return Response(eventIngested(platform, mode), mimetype="text/event-stream")
 
 def getPermutations(lista):
-   result = [','.join(list(permutation)) for permutation in itertools.product(lista, repeat=3)] 
+   result = [','.join(list(permutation)) for permutation in itertools.product(lista, repeat=8)] 
    result.extend([','.join(list(permutation)) for permutation in itertools.product(lista, repeat=4)] ) 
    result.extend([','.join(list(permutation)) for permutation in itertools.product(lista, repeat=5)] ) 
    
